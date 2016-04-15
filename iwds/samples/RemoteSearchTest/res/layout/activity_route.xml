@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/start_text"
+            android:layout_width="100sp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/border"
+            android:gravity="center"
+            android:hint="请输入起点"
+            android:imeOptions="actionDone"
+            android:paddingBottom="@dimen/start_content_vertical"
+            android:paddingTop="@dimen/start_content_vertical"
+            android:singleLine="true"
+            android:text="深圳北站"
+            android:textColor="#000000"
+            android:textSize="16.0sp" />
+
+        <EditText
+            android:id="@+id/end_text"
+            android:layout_width="100sp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/border"
+            android:gravity="center"
+            android:hint="请输入终点"
+            android:imeOptions="actionDone"
+            android:paddingBottom="@dimen/start_content_vertical"
+            android:paddingTop="@dimen/start_content_vertical"
+            android:singleLine="true"
+            android:text="宝安机场"
+            android:textColor="#000000"
+            android:textSize="16.0sp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.1dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/black" >
+    </View>
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/busButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="公交"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/driveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dip"
+            android:text="驾车"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/walkButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dip"
+            android:text="步行"
+            android:textSize="16sp" />
+    </RadioGroup>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.1dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/black" >
+    </View>
+
+    <Button
+        android:id="@+id/searchButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:background="@drawable/border"
+        android:paddingBottom="@dimen/start_content_vertical"
+        android:paddingTop="@dimen/start_content_vertical"
+        android:text="开始搜索" />
+
+</LinearLayout>

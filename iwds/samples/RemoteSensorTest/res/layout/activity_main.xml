@@ -1,0 +1,137 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/text_steps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/steps"
+            android:textSize="26sp" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:layout_marginTop="5dip"
+            android:background="#00C0FF" />
+
+        <TextView
+            android:id="@+id/text_heart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hearts"
+            android:textSize="26sp" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:layout_marginTop="5dip"
+            android:background="#00C0FF" />
+
+        <TextView
+            android:id="@+id/text_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/temp"
+            android:textSize="26sp" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:layout_marginTop="5dip"
+            android:background="#00C0FF" />
+
+        <TextView
+            android:id="@+id/text_humi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/humi"
+            android:textSize="26sp" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:layout_marginTop="5dip"
+            android:background="#00C0FF" />
+
+        <TextView
+            android:id="@+id/text_pressure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pressure"
+            android:textSize="26sp" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:layout_marginTop="5dip"
+            android:background="#00C0FF" />
+
+        <TextView
+            android:id="@+id/text_gesture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/gesture"
+            android:textSize="26sp" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:layout_marginTop="5dip"
+            android:background="#00C0FF" />
+
+        <TextView
+            android:id="@+id/text_motion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/motion"
+            android:textSize="26sp" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:layout_marginTop="5dip"
+            android:background="#00C0FF" />
+
+        <TextView
+            android:id="@+id/text_uv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/uv"
+            android:textSize="26sp" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:layout_marginTop="5dip"
+            android:background="#00C0FF" />
+
+        <TextView
+            android:id="@+id/text_voice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/voice"
+            android:textSize="26sp" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:layout_marginTop="5dip"
+            android:background="#00C0FF" />
+
+        <TextView
+            android:id="@+id/text_proximity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/proximity"
+            android:textSize="26sp" />
+    </LinearLayout>
+
+</ScrollView>

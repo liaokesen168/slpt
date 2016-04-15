@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RemoteBroadcastTest</string>
+    <string name="btn_broadcast_for_system">Broadcast for System</string>
+    <string name="btn_broadcast_for_remote">Broadcast for Remote</string>
+
+</resources>

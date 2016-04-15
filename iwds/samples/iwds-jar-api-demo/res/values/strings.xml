@@ -1,0 +1,45 @@
+<resources>
+
+    <string name="app_name">iwdsJarApiDemo</string>
+
+
+    <!-- FileTransaction -->
+    <string name="btn_send">Send</string>
+    <string name="btn_connect">Connect</string>
+    <string name="btn_disconnect">Disconnect</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Sendor -->
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="steps">Steps:</string>
+    <string name="hearts">Heart Rate:</string>
+    <string name="temp">Temp:</string>
+    <string name="humi">Humi</string>
+    <string name="pressure">Pressure:</string>
+    <string name="gesture">Gesture:</string>
+    <string name="motion">Motion:</string>
+    
+    <!-- Cloud -->
+    <string name="login_label">Login</string>
+    <string name="login_anonymous_label">Login anonymous</string>
+    <string name="action_third_account_login">Login with third account</string>
+    <string name="register_label">Register</string>
+    <string name="reset_password_label">Reset password</string>
+    <string name="insert_label">insert</string>
+    <string name="update_label">update</string>
+    <string name="query_label">query</string>
+    <string name="delete_label">delete</string>
+    <string name="user_name_label">user name</string>
+    <string name="password_label">password</string>
+    <string name="mail_label">mail</string>
+    <string name="verification_code_label">Verification code</string>
+    <string name="request_verification_label">Request\nverification</string>
+    <string name="phone_number_label">Phone number</string>
+    <string name="normal_register_label">Normal register</string>
+    <string name="phone_register_label">Phone register</string>
+    <string name="mail_register_label">Mail register</string>
+    <string name="reset_passwrod_label">Reset passwrod</string>
+
+</resources>

@@ -1,0 +1,135 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <Button android:id="@+id/get_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_getlist" />
+
+    <Button android:id="@+id/clear_data_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="@string/button_clear_data" />
+
+    <Button android:id="@+id/install_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/get_button"
+        android:layout_alignParentLeft="true"
+        android:text="@string/button_install" />
+
+    <Button android:id="@+id/clear_cache_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/clear_data_button"
+        android:layout_alignParentRight="true"
+        android:text="@string/button_clear_cache" />
+
+    <Button android:id="@+id/delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/install_button"
+        android:layout_alignParentLeft="true"
+        android:text="@string/button_delete" />
+
+    <Button android:id="@+id/get_mem_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/clear_cache_button"
+        android:layout_alignParentRight="true"
+        android:text="@string/button_get_mem" />
+
+    <Button android:id="@+id/pkg_size_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/delete_button"
+        android:layout_alignParentLeft="true"
+        android:text="@string/button_pkg_size" />
+
+    <Button android:id="@+id/get_processes_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/get_mem_button"
+        android:layout_alignParentRight="true"
+        android:text="@string/button_get_processes" />
+
+    <Button android:id="@+id/del_all_data_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/pkg_size_button"
+        android:layout_alignParentLeft="true"
+        android:text="@string/button_del_all_data" />
+
+    <Button android:id="@+id/kill_process_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/get_processes_button"
+        android:layout_alignParentRight="true"
+        android:text="@string/button_kill_process" />
+
+    <Button android:id="@+id/set_right_hand_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/del_all_data_button"
+        android:layout_alignParentLeft="true"
+        android:text="@string/button_set_right_hand" />
+
+    <Button android:id="@+id/get_storage_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/kill_process_button"
+        android:layout_alignParentRight="true"
+        android:text="@string/button_get_storage" />
+
+    <Button android:id="@+id/set_left_hand_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/set_right_hand_button"
+        android:layout_alignParentLeft="true"
+        android:text="@string/button_set_left_hand" />
+
+    <Button android:id="@+id/get_hand_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/get_storage_button"
+        android:layout_alignParentRight="true"
+        android:text="@string/button_get_hand" />
+
+    <Button android:id="@+id/clear_log_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/set_left_hand_button"
+        android:layout_alignParentLeft="true"
+        android:text="@string/button_clear_log" />
+
+    <ImageView
+        android:id="@+id/icon_image"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="#000"
+        android:scaleType="center"
+        android:layout_below="@id/clear_log_button"
+        android:layout_alignParentLeft="true" />
+
+    <TextView android:id="@+id/progress_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_progress"
+        android:layout_below="@id/icon_image"
+        android:layout_alignParentLeft="true" />
+
+    <TextView android:id="@+id/app_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_list"
+        android:layout_below="@id/progress_text"
+        android:layout_alignParentLeft="true"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="false" />
+
+</RelativeLayout>

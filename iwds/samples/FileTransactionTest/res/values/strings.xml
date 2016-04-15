@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">FileTransactionTest</string>
+    <string name="iterations_count">Iterations count</string>
+    <string name="send">Send</string>
+    <string name="file_not_found">File not found at&#160;</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="link_connected">Link connected</string>
+    <string name="link_disconnected">Link disconnected</string>
+    <string name="send_success">send success</string>
+    <string name="send_fail">send error</string>
+    <string name="recv_success">recv success</string>
+    <string name="recv_fail">recv error</string>
+    <string name="data_channel_available">Data channel is available</string>
+    <string name="data_channel_unavailable">Data channel is unavailable</string>
+    <string name="connect_again">Please connect again</string>
+    <string name="consume_time">consume time</string>
+    <string name="clear_log">Clear Log</string>
+    <string name="file_transfer">File transfer</string>
+    <string name="continue_transfer">Continue transfer</string>
+    <string name="file_name">File name</string>
+    <string name="file_size">File size</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="unable_to_send">Unable to send</string>
+    <string name="send_progress">Send progress: </string>
+    <string name="recv_progress">Recv progress: </string>
+
+</resources>

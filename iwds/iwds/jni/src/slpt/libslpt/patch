@@ -1,0 +1,2714 @@
+diff --git a/Android.mk b/Android.mk
+index 31c783f..3c6d91e 100644
+--- a/Android.mk
++++ b/Android.mk
+@@ -1,7 +1,7 @@
+ LOCAL_PATH:= $(call my-dir)
+ 
+ SLPT_BUILD_TARGET := executable
+-# SLPT_BUILD_TARGET := shared_library
++#SLPT_BUILD_TARGET := shared_library
+ 
+ include $(CLEAR_VARS)
+ 
+@@ -127,6 +127,7 @@ LOCAL_SRC_FILES := \
+ 	sview/core/num_sview.c \
+ 	sview/core/linear_layout.c \
+ 	sview/core/absolute_layout.c \
++	sview/core/frame_layout.c \
+ 	sview/core/root_sview.c
+ 
+ #sview other
+@@ -147,7 +148,18 @@ LOCAL_SRC_FILES := \
+ 	sview/time/year0_sview.c \
+ 	sview/time/year1_sview.c \
+ 	sview/time/year2_sview.c \
+-	sview/time/year3_sview.c
++	sview/time/year3_sview.c \
++	sview/analog/rotate2.c \
++	sview/analog/rotate_pic_sview.c \
++	sview/analog/time/analog_time_sview.c \
++	sview/analog/time/analog_second_sview.c \
++	sview/analog/time/analog_minute_sview.c \
++	sview/analog/time/analog_hour_sview.c \
++	sview/analog/time/analog_day_sview.c \
++	sview/analog/time/analog_week_sview.c \
++	sview/analog/time/analog_month_sview.c \
++	sview/analog/time/analog_am_pm_sview.c \
++	sview/analog/time/analog_hour_with_minute_sview.c
+ 
+ LOCAL_MODULE := slpt-linux
+ 
+diff --git a/include/fb_struct.h b/include/fb_struct.h
+index 9a77091..104da69 100644
+--- a/include/fb_struct.h
++++ b/include/fb_struct.h
+@@ -211,6 +211,10 @@ static inline int region_equal(struct fb_region *region0, struct fb_region *regi
+ 		(region0->pixels_per_line == region0->pixels_per_line);
+ }
+ 
++extern void rotate_region(struct fb_region *src, int angle, struct position *pos,
++    unsigned int *length, struct color_map **s, struct color_map *s0);
++extern void write_color_map(struct fb_region *region, struct color_map *s, int x_offset, int y_offset, int quad);
++
+ extern void region_rotate(struct fb_region *dst, struct fb_region *src, struct rotate_desc *rotate);
+ extern void region_rotate_alpha(struct fb_region *dst, struct fb_region *src, struct rotate_desc *rotate);
+ extern void region_rotate_alpha_save(struct fb_region *dst, struct fb_region *src, struct rotate_desc *rotate,
+diff --git a/include/sview/analog_am_pm_sview.h b/include/sview/analog_am_pm_sview.h
+new file mode 100644
+index 0000000..b3c889f
+--- /dev/null
++++ b/include/sview/analog_am_pm_sview.h
+@@ -0,0 +1,53 @@
++#ifndef _ANALOG_AM_PM_SVIEW_H_
++#define _ANALOG_AM_PM_SVIEW_H_
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <sview/analog_time_sview.h>
++
++struct analog_am_pm_sview {
++	struct analog_time_sview timev;
++};
++
++#define to_analog_am_pm_sview(view) ((struct analog_am_pm_sview*) (view))
++
++#if 1  /* use macro to call the inheritance methods directly */
++#define analog_am_pm_sview_draw          analog_time_sview_draw
++#define analog_am_pm_sview_measure_size  analog_time_sview_measure_size
++#define analog_am_pm_sview_sync          analog_time_sview_sync
++#define analog_am_pm_sview_free          analog_time_sview_free
++#ifdef CONFIG_SLPT
++#define slpt_register_analog_am_pm_sview slpt_register_analog_time_sview
++#endif
++#else
++extern void analog_am_pm_sview_draw(struct sview *view);
++extern void analog_am_pm_sview_measure_size(struct sview *view);
++extern int analog_am_pm_sview_sync(struct sview *view);
++extern void analog_am_pm_sview_free(struct sview *view);
++#ifdef CONFIG_SLPT
++extern struct slpt_app_res *slpt_register_analog_am_pm_sview(struct sview *view, struct slpt_app_res *parent);
++#endif
++#endif
++
++extern int init_analog_am_pm_sview(struct analog_am_pm_sview *timev, const char *name);
++extern struct sview *alloc_analog_am_pm_sview(const char *name);
++
++static inline void analog_am_pm_sview_set_tm(struct sview *view, struct rtc_time *tm) {
++	analog_time_sview_set_tm(view, tm);
++}
++
++static inline int analog_am_pm_sview_set_pic(struct sview *view, const char *pic_name) {
++	return analog_time_sview_set_pic(view, pic_name);
++}
++
++static inline void analog_am_pm_sview_set_angle(struct sview *view, unsigned int angle) {
++	analog_time_sview_set_angle(view, angle);
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _ANALOG_AM_PM_SVIEW_H_ */
+diff --git a/include/sview/analog_day_sview.h b/include/sview/analog_day_sview.h
+new file mode 100644
+index 0000000..9709ae6
+--- /dev/null
++++ b/include/sview/analog_day_sview.h
+@@ -0,0 +1,53 @@
++#ifndef _ANALOG_DAY_SVIEW_H_
++#define _ANALOG_DAY_SVIEW_H_
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <sview/analog_time_sview.h>
++
++struct analog_day_sview {
++	struct analog_time_sview timev;
++};
++
++#define to_analog_day_sview(view) ((struct analog_day_sview*) (view))
++
++#if 1  /* use macro to call the inheritance methods directly */
++#define analog_day_sview_draw          analog_time_sview_draw
++#define analog_day_sview_measure_size  analog_time_sview_measure_size
++#define analog_day_sview_sync          analog_time_sview_sync
++#define analog_day_sview_free          analog_time_sview_free
++#ifdef CONFIG_SLPT
++#define slpt_register_analog_day_sview slpt_register_analog_time_sview
++#endif
++#else
++extern void analog_day_sview_draw(struct sview *view);
++extern void analog_day_sview_measure_size(struct sview *view);
++extern int analog_day_sview_sync(struct sview *view);
++extern void analog_day_sview_free(struct sview *view);
++#ifdef CONFIG_SLPT
++extern struct slpt_app_res *slpt_register_analog_day_sview(struct sview *view, struct slpt_app_res *parent);
++#endif
++#endif
++
++extern int init_analog_day_sview(struct analog_day_sview *timev, const char *name);
++extern struct sview *alloc_analog_day_sview(const char *name);
++
++static inline void analog_day_sview_set_tm(struct sview *view, struct rtc_time *tm) {
++	analog_time_sview_set_tm(view, tm);
++}
++
++static inline int analog_day_sview_set_pic(struct sview *view, const char *pic_name) {
++	return analog_time_sview_set_pic(view, pic_name);
++}
++
++static inline void analog_day_sview_set_angle(struct sview *view, unsigned int angle) {
++	analog_time_sview_set_angle(view, angle);
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _ANALOG_DAY_SVIEW_H_ */
+diff --git a/include/sview/analog_hour_sview.h b/include/sview/analog_hour_sview.h
+new file mode 100644
+index 0000000..afe5a28
+--- /dev/null
++++ b/include/sview/analog_hour_sview.h
+@@ -0,0 +1,53 @@
++#ifndef _ANALOG_HOUR_SVIEW_H_
++#define _ANALOG_HOUR_SVIEW_H_
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <sview/analog_time_sview.h>
++
++struct analog_hour_sview {
++	struct analog_time_sview timev;
++};
++
++#define to_analog_hour_sview(view) ((struct analog_hour_sview*) (view))
++
++#if 1  /* use macro to call the inheritance methods directly */
++#define analog_hour_sview_draw          analog_time_sview_draw
++#define analog_hour_sview_measure_size  analog_time_sview_measure_size
++#define analog_hour_sview_sync          analog_time_sview_sync
++#define analog_hour_sview_free          analog_time_sview_free
++#ifdef CONFIG_SLPT
++#define slpt_register_analog_hour_sview slpt_register_analog_time_sview
++#endif
++#else
++extern void analog_hour_sview_draw(struct sview *view);
++extern void analog_hour_sview_measure_size(struct sview *view);
++extern int analog_hour_sview_sync(struct sview *view);
++extern void analog_hour_sview_free(struct sview *view);
++#ifdef CONFIG_SLPT
++extern struct slpt_app_res *slpt_register_analog_hour_sview(struct sview *view, struct slpt_app_res *parent);
++#endif
++#endif
++
++extern int init_analog_hour_sview(struct analog_hour_sview *timev, const char *name);
++extern struct sview *alloc_analog_hour_sview(const char *name);
++
++static inline void analog_hour_sview_set_tm(struct sview *view, struct rtc_time *tm) {
++	analog_time_sview_set_tm(view, tm);
++}
++
++static inline int analog_hour_sview_set_pic(struct sview *view, const char *pic_name) {
++	return analog_time_sview_set_pic(view, pic_name);
++}
++
++static inline void analog_hour_sview_set_angle(struct sview *view, unsigned int angle) {
++	analog_time_sview_set_angle(view, angle);
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _ANALOG_HOUR_SVIEW_H_ */
+diff --git a/include/sview/analog_hour_with_minute_sview.h b/include/sview/analog_hour_with_minute_sview.h
+new file mode 100644
+index 0000000..2fb385e
+--- /dev/null
++++ b/include/sview/analog_hour_with_minute_sview.h
+@@ -0,0 +1,53 @@
++#ifndef _ANALOG_HOUR_WITH_MINUTE_SVIEW_H_
++#define _ANALOG_HOUR_WITH_MINUTE_SVIEW_H_
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <sview/analog_time_sview.h>
++
++struct analog_hour_with_minute_sview {
++	struct analog_time_sview timev;
++};
++
++#define to_analog_hour_with_minute_sview(view) ((struct analog_hour_with_minute_sview*) (view))
++
++#if 1  /* use macro to call the inheritance methods directly */
++#define analog_hour_with_minute_sview_draw          analog_time_sview_draw
++#define analog_hour_with_minute_sview_measure_size  analog_time_sview_measure_size
++#define analog_hour_with_minute_sview_sync          analog_time_sview_sync
++#define analog_hour_with_minute_sview_free          analog_time_sview_free
++#ifdef CONFIG_SLPT
++#define slpt_register_analog_hour_with_minute_sview slpt_register_analog_time_sview
++#endif
++#else
++extern void analog_hour_with_minute_sview_draw(struct sview *view);
++extern void analog_hour_with_minute_sview_measure_size(struct sview *view);
++extern int analog_hour_with_minute_sview_sync(struct sview *view);
++extern void analog_hour_with_minute_sview_free(struct sview *view);
++#ifdef CONFIG_SLPT
++extern struct slpt_app_res *slpt_register_analog_hour_with_minute_sview(struct sview *view, struct slpt_app_res *parent);
++#endif
++#endif
++
++extern int init_analog_hour_with_minute_sview(struct analog_hour_with_minute_sview *timev, const char *name);
++extern struct sview *alloc_analog_hour_with_minute_sview(const char *name);
++
++static inline void analog_hour_with_minute_sview_set_tm(struct sview *view, struct rtc_time *tm) {
++	analog_time_sview_set_tm(view, tm);
++}
++
++static inline int analog_hour_with_minute_sview_set_pic(struct sview *view, const char *pic_name) {
++	return analog_time_sview_set_pic(view, pic_name);
++}
++
++static inline void analog_hour_with_minute_sview_set_angle(struct sview *view, unsigned int angle) {
++	analog_time_sview_set_angle(view, angle);
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _ANALOG_HOUR_WITH_MINUTE_SVIEW_H_ */
+diff --git a/include/sview/analog_minute_sview.h b/include/sview/analog_minute_sview.h
+new file mode 100644
+index 0000000..a2bb8fb
+--- /dev/null
++++ b/include/sview/analog_minute_sview.h
+@@ -0,0 +1,53 @@
++#ifndef _ANALOG_MINUTE_SVIEW_H_
++#define _ANALOG_MINUTE_SVIEW_H_
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <sview/analog_time_sview.h>
++
++struct analog_minute_sview {
++	struct analog_time_sview timev;
++};
++
++#define to_analog_minute_sview(view) ((struct analog_minute_sview*) (view))
++
++#if 1  /* use macro to call the inheritance methods directly */
++#define analog_minute_sview_draw          analog_time_sview_draw
++#define analog_minute_sview_measure_size  analog_time_sview_measure_size
++#define analog_minute_sview_sync          analog_time_sview_sync
++#define analog_minute_sview_free          analog_time_sview_free
++#ifdef CONFIG_SLPT
++#define slpt_register_analog_minute_sview slpt_register_analog_time_sview
++#endif
++#else
++extern void analog_minute_sview_draw(struct sview *view);
++extern void analog_minute_sview_measure_size(struct sview *view);
++extern int analog_minute_sview_sync(struct sview *view);
++extern void analog_minute_sview_free(struct sview *view);
++#ifdef CONFIG_SLPT
++extern struct slpt_app_res *slpt_register_analog_minute_sview(struct sview *view, struct slpt_app_res *parent);
++#endif
++#endif
++
++extern int init_analog_minute_sview(struct analog_minute_sview *timev, const char *name);
++extern struct sview *alloc_analog_minute_sview(const char *name);
++
++static inline void analog_minute_sview_set_tm(struct sview *view, struct rtc_time *tm) {
++	analog_time_sview_set_tm(view, tm);
++}
++
++static inline int analog_minute_sview_set_pic(struct sview *view, const char *pic_name) {
++	return analog_time_sview_set_pic(view, pic_name);
++}
++
++static inline void analog_minute_sview_set_angle(struct sview *view, unsigned int angle) {
++	analog_time_sview_set_angle(view, angle);
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _ANALOG_MINUTE_SVIEW_H_ */
+diff --git a/include/sview/analog_month_sview.h b/include/sview/analog_month_sview.h
+new file mode 100644
+index 0000000..47ed501
+--- /dev/null
++++ b/include/sview/analog_month_sview.h
+@@ -0,0 +1,53 @@
++#ifndef _ANALOG_MONTH_SVIEW_H_
++#define _ANALOG_MONTH_SVIEW_H_
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <sview/analog_time_sview.h>
++
++struct analog_month_sview {
++	struct analog_time_sview timev;
++};
++
++#define to_analog_month_sview(view) ((struct analog_month_sview*) (view))
++
++#if 1  /* use macro to call the inheritance methods directly */
++#define analog_month_sview_draw          analog_time_sview_draw
++#define analog_month_sview_measure_size  analog_time_sview_measure_size
++#define analog_month_sview_sync          analog_time_sview_sync
++#define analog_month_sview_free          analog_time_sview_free
++#ifdef CONFIG_SLPT
++#define slpt_register_analog_month_sview slpt_register_analog_time_sview
++#endif
++#else
++extern void analog_month_sview_draw(struct sview *view);
++extern void analog_month_sview_measure_size(struct sview *view);
++extern int analog_month_sview_sync(struct sview *view);
++extern void analog_month_sview_free(struct sview *view);
++#ifdef CONFIG_SLPT
++extern struct slpt_app_res *slpt_register_analog_month_sview(struct sview *view, struct slpt_app_res *parent);
++#endif
++#endif
++
++extern int init_analog_month_sview(struct analog_month_sview *timev, const char *name);
++extern struct sview *alloc_analog_month_sview(const char *name);
++
++static inline void analog_month_sview_set_tm(struct sview *view, struct rtc_time *tm) {
++	analog_time_sview_set_tm(view, tm);
++}
++
++static inline int analog_month_sview_set_pic(struct sview *view, const char *pic_name) {
++	return analog_time_sview_set_pic(view, pic_name);
++}
++
++static inline void analog_month_sview_set_angle(struct sview *view, unsigned int angle) {
++	analog_time_sview_set_angle(view, angle);
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _ANALOG_MONTH_SVIEW_H_ */
+diff --git a/include/sview/analog_second_sview.h b/include/sview/analog_second_sview.h
+new file mode 100644
+index 0000000..dc01f15
+--- /dev/null
++++ b/include/sview/analog_second_sview.h
+@@ -0,0 +1,53 @@
++#ifndef _ANALOG_SECOND_SVIEW_H_
++#define _ANALOG_SECOND_SVIEW_H_
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <sview/analog_time_sview.h>
++
++struct analog_second_sview {
++	struct analog_time_sview timev;
++};
++
++#define to_analog_second_sview(view) ((struct analog_second_sview*) (view))
++
++#if 1  /* use macro to call the inheritance methods directly */
++#define analog_second_sview_draw          analog_time_sview_draw
++#define analog_second_sview_measure_size  analog_time_sview_measure_size
++#define analog_second_sview_sync          analog_time_sview_sync
++#define analog_second_sview_free          analog_time_sview_free
++#ifdef CONFIG_SLPT
++#define slpt_register_analog_second_sview slpt_register_analog_time_sview
++#endif
++#else
++extern void analog_second_sview_draw(struct sview *view);
++extern void analog_second_sview_measure_size(struct sview *view);
++extern int analog_second_sview_sync(struct sview *view);
++extern void analog_second_sview_free(struct sview *view);
++#ifdef CONFIG_SLPT
++extern struct slpt_app_res *slpt_register_analog_second_sview(struct sview *view, struct slpt_app_res *parent);
++#endif
++#endif
++
++extern int init_analog_second_sview(struct analog_second_sview *timev, const char *name);
++extern struct sview *alloc_analog_second_sview(const char *name);
++
++static inline void analog_second_sview_set_tm(struct sview *view, struct rtc_time *tm) {
++	analog_time_sview_set_tm(view, tm);
++}
++
++static inline int analog_second_sview_set_pic(struct sview *view, const char *pic_name) {
++	return analog_time_sview_set_pic(view, pic_name);
++}
++
++static inline void analog_second_sview_set_angle(struct sview *view, unsigned int angle) {
++	analog_time_sview_set_angle(view, angle);
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _ANALOG_SECOND_SVIEW_H_ */
+diff --git a/include/sview/analog_time_sview.h b/include/sview/analog_time_sview.h
+new file mode 100644
+index 0000000..87362f0
+--- /dev/null
++++ b/include/sview/analog_time_sview.h
+@@ -0,0 +1,68 @@
++#ifndef _ANALOG_TIME_SVIEW_H_
++#define _ANALOG_TIME_SVIEW_H_
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <sview/rotate_pic_sview.h>
++#include <time_notify.h>
++
++struct analog_time_sview {
++	struct rotate_pic_sview rpv;
++	struct time_notify no;
++	unsigned int level;
++};
++
++enum {
++	ANALOG_TIME_SEC = 0,
++	ANALOG_TIME_MIN,
++	ANALOG_TIME_HOUR,
++	ANALOG_TIME_DAY,
++	ANALOG_TIME_WEEK,
++	ANALOG_TIME_MON,
++
++	ANALOG_TIME_HOUR_WITH_MIN,
++	ANALOG_TIME_AM_PM,
++
++	ANALOG_TIME_NUMS,
++};
++
++#define to_analog_time_sview(view) ((struct analog_time_sview*) (view))
++
++#if 1  /* use macro to call the inheritance methods directly */
++#define analog_time_sview_draw          rotate_pic_sview_draw
++#define analog_time_sview_measure_size  rotate_pic_sview_measure_size
++#define analog_time_sview_sync          rotate_pic_sview_sync
++#ifdef CONFIG_SLPT
++#define slpt_register_analog_time_sview slpt_register_rotate_pic_sview
++#endif
++#else
++extern void analog_time_sview_draw(struct sview *view);
++extern void analog_time_sview_measure_size(struct sview *view);
++extern int analog_time_sview_sync(struct sview *view);
++#ifdef CONFIG_SLPT
++extern struct slpt_app_res *slpt_register_analog_time_sview(struct sview *view, struct slpt_app_res *parent);
++#endif
++#endif
++
++extern void analog_time_sview_free(struct sview *view);
++extern int init_analog_time_sview(struct analog_time_sview *timev, const char *name);
++extern struct sview *alloc_analog_time_sview(const char *name);
++
++extern void analog_time_sview_set_level(struct sview *view, unsigned int level);
++extern void analog_time_sview_set_tm(struct sview *view, struct rtc_time *tm);
++
++static inline int analog_time_sview_set_pic(struct sview *view, const char *pic_name) {
++	return rotate_pic_sview_set_pic(view, pic_name);
++}
++
++static inline void analog_time_sview_set_angle(struct sview *view, unsigned int angle) {
++	rotate_pic_sview_set_angle(view, angle);
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _ANALOG_TIME_SVIEW_H_ */
++
+diff --git a/include/sview/analog_week_sview.h b/include/sview/analog_week_sview.h
+new file mode 100644
+index 0000000..08e3529
+--- /dev/null
++++ b/include/sview/analog_week_sview.h
+@@ -0,0 +1,53 @@
++#ifndef _ANALOG_WEEK_SVIEW_H_
++#define _ANALOG_WEEK_SVIEW_H_
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <sview/analog_time_sview.h>
++
++struct analog_week_sview {
++	struct analog_time_sview timev;
++};
++
++#define to_analog_week_sview(view) ((struct analog_week_sview*) (view))
++
++#if 1  /* use macro to call the inheritance methods directly */
++#define analog_week_sview_draw          analog_time_sview_draw
++#define analog_week_sview_measure_size  analog_time_sview_measure_size
++#define analog_week_sview_sync          analog_time_sview_sync
++#define analog_week_sview_free          analog_time_sview_free
++#ifdef CONFIG_SLPT
++#define slpt_register_analog_week_sview slpt_register_analog_time_sview
++#endif
++#else
++extern void analog_week_sview_draw(struct sview *view);
++extern void analog_week_sview_measure_size(struct sview *view);
++extern int analog_week_sview_sync(struct sview *view);
++extern void analog_week_sview_free(struct sview *view);
++#ifdef CONFIG_SLPT
++extern struct slpt_app_res *slpt_register_analog_week_sview(struct sview *view, struct slpt_app_res *parent);
++#endif
++#endif
++
++extern int init_analog_week_sview(struct analog_week_sview *timev, const char *name);
++extern struct sview *alloc_analog_week_sview(const char *name);
++
++static inline void analog_week_sview_set_tm(struct sview *view, struct rtc_time *tm) {
++	analog_time_sview_set_tm(view, tm);
++}
++
++static inline int analog_week_sview_set_pic(struct sview *view, const char *pic_name) {
++	return analog_time_sview_set_pic(view, pic_name);
++}
++
++static inline void analog_week_sview_set_angle(struct sview *view, unsigned int angle) {
++	analog_time_sview_set_angle(view, angle);
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _ANALOG_WEEK_SVIEW_H_ */
+diff --git a/include/sview/frame_layout.h b/include/sview/frame_layout.h
+new file mode 100644
+index 0000000..bf36542
+--- /dev/null
++++ b/include/sview/frame_layout.h
+@@ -0,0 +1,33 @@
++#ifndef _FRAME_LAYOUT_H_
++#define _FRAME_LAYOUT_H_
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <sview/sview_base.h>
++
++struct frame_layout {
++	struct sview view;
++};
++
++#define to_frame_layout(view) ((struct frame_layout *) (view))
++
++extern void init_frame_layout(struct frame_layout *layout, const char *name);
++extern struct sview *alloc_frame_layout(const char *name);
++extern void frame_layout_draw(struct sview *view);
++extern void frame_layout_measure_size(struct sview *view);
++extern int frame_layout_sync(struct sview *view);
++extern void frame_layout_free(struct sview *view);
++#ifdef CONFIG_SLPT
++extern struct slpt_app_res *slpt_register_frame_layout(struct sview *view, struct slpt_app_res *parent);
++#endif
++
++extern void frame_layout_add(struct sview *view, struct sview *child);
++extern void frame_layout_add_array(struct sview *view, struct sview **array, unsigned int size);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _FRAME_LAYOUT_H_ */
+diff --git a/include/sview/pic_sview.h b/include/sview/pic_sview.h
+index cbba209..3c32cd1 100644
+--- a/include/sview/pic_sview.h
++++ b/include/sview/pic_sview.h
+@@ -26,6 +26,12 @@ extern struct slpt_app_res *slpt_register_pic_sview(struct sview *view, struct s
+ 
+ extern int pic_sview_set_pic(struct sview *view, const char *pic_name);
+ 
++static inline struct fb_region *pic_sview_get_region(struct sview *view) {
++	struct pic_sview *pv = to_pic_sview(view);
++
++	return pv->pic ? picture_region(pv->pic) : NULL;
++}
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/include/sview/rotate2.h b/include/sview/rotate2.h
+new file mode 100644
+index 0000000..a548acd
+--- /dev/null
++++ b/include/sview/rotate2.h
+@@ -0,0 +1,35 @@
++#ifndef _ROTATE2_H_
++#define _ROTATE2_H_
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <sview/sview_base.h>
++
++#define ROTATE2_SAVE_INDEXS (90 + 1)
++
++struct rotate2 {
++	struct color_map *colors[ROTATE2_SAVE_INDEXS];
++	unsigned int length;
++	unsigned int angle;
++	unsigned char quad;
++	unsigned char align_center;
++	struct position center;
++	struct fb_region *region;
++};
++
++extern void rotate2_measure_size(struct rotate2 *rt, struct rect *rect);
++extern void rotate2_draw(struct rotate2 *rt, struct fb_region *base, struct position *pos);
++extern void rotate2_set_angle(struct rotate2 *rt, unsigned int angle);
++extern void rotate2_set_center(struct rotate2 *rt, unsigned int center_x, unsigned int center_y);
++extern void rotate2_set_align_center(struct rotate2 *rt, unsigned int enable);
++extern void rotate2_free_save_colors(struct rotate2 *rt);
++extern void rotate2_set_region(struct rotate2 *rt, struct fb_region *region);
++extern void init_rotate2(struct rotate2 *rt);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _ROTATE2_H_ */
+diff --git a/include/sview/rotate_pic_sview.h b/include/sview/rotate_pic_sview.h
+new file mode 100644
+index 0000000..7f434ae
+--- /dev/null
++++ b/include/sview/rotate_pic_sview.h
+@@ -0,0 +1,56 @@
++#ifndef _ROTATE_PIC_SVIEW_H_
++#define _ROTATE_PIC_SVIEW_H_
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <sview/sview_base.h>
++#include <sview/pic_sview.h>
++#include <sview/rotate2.h>
++
++struct rotate_pic_sview {
++	struct pic_sview picv;
++	struct rotate2 rotate;
++	unsigned int angle;
++};
++
++#define to_rotate_pic_sview(view) ((struct rotate_pic_sview *) (view))
++
++static int rotate_pic_sview_set_pic(struct sview *view, const char *pic_name) {
++	return pic_sview_set_pic(view, pic_name);
++}
++
++static void rotate_pic_sview_set_center(struct sview *view, unsigned int center_x, unsigned int center_y) {
++	struct rotate_pic_sview *rpv = to_rotate_pic_sview(view);
++	rotate2_set_center(&rpv->rotate, center_x, center_y);
++}
++
++static void rotate_pic_sview_set_align_center(struct sview *view, unsigned int enable) {
++	struct rotate_pic_sview *rpv = to_rotate_pic_sview(view);
++	rotate2_set_align_center(&rpv->rotate, enable);
++}
++
++static void rotate_pic_sview_set_angle(struct sview *view, unsigned int angle) {
++	struct rotate_pic_sview *rpv = to_rotate_pic_sview(view);
++	rotate2_set_angle(&rpv->rotate, angle);
++}
++
++#if 1  /* use macro to call the inheritance methods directly */
++#ifdef CONFIG_SLPT
++#define slpt_register_rotate_pic_sview  slpt_register_pic_sview
++#endif
++#else
++#ifdef CONFIG_SLPT
++extern struct slpt_app_res *slpt_register_rotate_pic_sview(struct sview *view, struct slpt_app_res *parent);
++#endif
++#endif
++
++extern void rotate_pic_sview_draw(struct sview *view);
++extern void rotate_pic_sview_measure_size(struct sview *view);
++extern int rotate_pic_sview_sync(struct sview *view);
++extern void rotate_pic_sview_free(struct sview *view);
++extern void init_rotate_pic_sview(struct rotate_pic_sview *rpv, const char *name);
++extern struct sview *alloc_rotate_pic_sview(const char *name);
++
++#endif /* _ROTATE_PIC_SVIEW_H_ */
++
+diff --git a/include/sview/sview.h b/include/sview/sview.h
+index e4b9a14..9a86010 100644
+--- a/include/sview/sview.h
++++ b/include/sview/sview.h
+@@ -14,6 +14,7 @@ extern "C" {
+ #include <sview/num_sview.h>
+ #include <sview/linear_layout.h>
+ #include <sview/absolute_layout.h>
++#include <sview/frame_layout.h>
+ #include <sview/time_num_sview.h>
+ #include <sview/secondL_sview.h>
+ #include <sview/secondH_sview.h>
+@@ -30,6 +31,16 @@ extern "C" {
+ #include <sview/year1_sview.h>
+ #include <sview/year2_sview.h>
+ #include <sview/year3_sview.h>
++#include <sview/rotate_pic_sview.h>
++#include <sview/analog_time_sview.h>
++#include <sview/analog_second_sview.h>
++#include <sview/analog_minute_sview.h>
++#include <sview/analog_hour_sview.h>
++#include <sview/analog_day_sview.h>
++#include <sview/analog_week_sview.h>
++#include <sview/analog_month_sview.h>
++#include <sview/analog_am_pm_sview.h>
++#include <sview/analog_hour_with_minute_sview.h>
+ 
+ /*
+  * sview methods
+diff --git a/include/sview/sview_background.h b/include/sview/sview_background.h
+index 3a88304..e67fb86 100644
+--- a/include/sview/sview_background.h
++++ b/include/sview/sview_background.h
+@@ -18,13 +18,32 @@ static inline int background_is_valid(struct background *background) {
+ 	return background->pic != NULL || background->color != INVALID_COLOR;
+ }
+ 
++static inline struct picture *background_picture(struct background *background) {
++	return background->pic;
++}
++
++static inline void background_set_picture(struct background *background, struct picture *pic) {
++	background->pic = pic;
++}
++
+ static inline struct fb_region *background_region(struct background *background) {
+ 	return picture_region(background->pic);
+ }
+ 
++static inline void background_set_color(struct background *background, unsigned int color) {
++	background->color = color;
++}
++
++static inline unsigned int background_color(struct background *background) {
++	return background->color;
++}
++
++extern int background_set_pic(struct background *background, const char *pic_name);
+ extern int background_sync_setting(struct background *background);
+ extern void background_write_to_target(struct background *background,
+ 	   struct fb_region *base, struct position *pos);
++extern void background_write_to_target_no_alpha(struct background *background,
++	   struct fb_region *base, struct position *pos);
+ 
+ #ifdef __cplusplus
+ }
+diff --git a/include/sview/sview_base.h b/include/sview/sview_base.h
+index f6e350c..ac1179a 100644
+--- a/include/sview/sview_base.h
++++ b/include/sview/sview_base.h
+@@ -34,6 +34,7 @@ struct rect {
+ #define ALIGN_TOP    0
+ #define ALIGN_BOTTOM 1
+ #define ALIGN_CENTER 2
++#define ALIGN_BY_PARENT 3
+ 
+ /* rect descript */
+ #define RECT_FIT_BACKGROUND 0
+@@ -82,6 +83,8 @@ struct sview {
+ 	unsigned char desc_h;
+ 	unsigned char center_horizontal;
+ 	unsigned char center_vertical;
++	unsigned char align_parent_x;
++	unsigned char align_parent_y;
+ 	unsigned char show;
+ 	unsigned char ready;
+ 	unsigned char update;
+@@ -105,6 +108,7 @@ enum {
+ 	SVIEW_NUM,
+ 	SVIEW_LINEAR_LAYOUT,
+ 	SVIEW_ABSOLUTE_LAYOUT,
++	SVIEW_FRAME_LAYOUT,
+ 	SVIEW_TIME_NUM,
+ 	SVIEW_SECOND_L,
+ 	SVIEW_SECOND_H,
+@@ -121,6 +125,16 @@ enum {
+ 	SVIEW_YEAR1,
+ 	SVIEW_YEAR2,
+ 	SVIEW_YEAR3,
++	SVIEW_ROTATE_PIC,
++	SVIEW_ANALOG_TIME,
++	SVIEW_ANALOG_SECOND,
++	SVIEW_ANALOG_MINUTE,
++	SVIEW_ANALOG_HOUR,
++	SVIEW_ANALOG_DAY,
++	SVIEW_ANALOG_WEEK,
++	SVIEW_ANALOG_MONTH,
++	SVIEW_ANALOG_AM_PM,
++	SVIEW_ANALOG_HOUR_WITH_MINUTE,
+ 
+ 	/* keep last */
+ 	SVIEW_NUMS,
+@@ -203,6 +217,14 @@ extern struct slpt_app_res *slpt_register_sview
+ extern void slpt_unregister_sview(struct sview *view);
+ #endif
+ 
++static inline unsigned char sview_align(unsigned char align_parent, unsigned char layout_align) {
++	return align_parent == ALIGN_BY_PARENT ? layout_align : align_parent;
++}
++
++static inline int sview_can_be_show(struct sview *view) {
++	return view->show && view->ready;
++}
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/include/sview/sview_grp.h b/include/sview/sview_grp.h
+index 3ec1a10..971eff5 100644
+--- a/include/sview/sview_grp.h
++++ b/include/sview/sview_grp.h
+@@ -13,6 +13,7 @@ extern void sview_grp_add_by_level(struct list_head *grp, struct sview *view);
+ extern void sview_grp_add_array_by_level(struct list_head *grp, struct sview **array, unsigned int size);
+ extern void sview_grp_sort(struct list_head *grp);
+ extern int sview_grp_sync(struct list_head *grp);
++extern int sview_grp_sync_strictly(struct list_head *grp);
+ extern void sview_grp_free(struct list_head *grp);
+ extern struct sview *sview_grp_find(struct list_head *grp, const char *child_name);
+ 
+diff --git a/sview/analog/rotate2.c b/sview/analog/rotate2.c
+new file mode 100644
+index 0000000..b816609
+--- /dev/null
++++ b/sview/analog/rotate2.c
+@@ -0,0 +1,81 @@
++#include <common.h>
++#include <sview/rotate2.h>
++
++void rotate2_measure_size(struct rotate2 *rt, struct rect *rect) {
++	if (!rt->region) {
++		rect->w = 0;
++		rect->h = 0;
++		return;
++	}
++
++	if (!rt->colors[rt->angle]) {
++		rotate_region(rt->region, rt->angle, &rt->center,
++					  &rt->length, &rt->colors[rt->angle], rt->colors[0]);
++	}
++
++	rect->w = rt->length * 2;
++	rect->h = rt->length * 2;
++}
++
++void rotate2_draw(struct rotate2 *rt, struct fb_region *base, struct position *pos) {
++	if (!rt->colors[rt->angle]) {
++		rotate_region(rt->region, rt->angle, &rt->center,
++					  &rt->length, &rt->colors[rt->angle], rt->colors[0]);
++		if (!rt->colors[rt->angle])
++			return;	
++	}
++
++	write_color_map(base, rt->colors[rt->angle], rt->length + pos->x, rt->length + pos->y, rt->quad);
++}
++
++void rotate2_set_angle(struct rotate2 *rt, unsigned int angle) {
++	unsigned int quad;
++
++	angle = angle % 360;
++	quad = angle / 90;
++	angle = angle % 90;
++	if (quad >= 1)
++		quad = 4 - quad;
++	rt->angle = angle;
++	rt->quad = quad;
++}
++
++void rotate2_set_center(struct rotate2 *rt, unsigned int center_x, unsigned int center_y) {
++	rt->center.x = center_x;
++	rt->center.y = center_y;
++}
++
++void rotate2_set_align_center(struct rotate2 *rt, unsigned int enable) {
++	if (!rt->align_center && enable && rt->region) {
++		rt->center.x = rt->region->xres / 2;
++		rt->center.y = rt->region->yres / 2;
++	}
++
++	rt->align_center = enable;
++}
++
++void rotate2_free_save_colors(struct rotate2 *rt) {
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(rt->colors); ++i) {
++		if (rt->colors[i])
++			color_map_free(&rt->colors[i]);
++		rt->colors[i] = NULL;
++	}
++}
++
++void rotate2_set_region(struct rotate2 *rt, struct fb_region *region) {
++	if (rt->region != region) {
++		rt->region = region;
++		rotate2_free_save_colors(rt);
++		if (region && rt->align_center) {
++			rt->center.x = rt->region->xres / 2;
++			rt->center.y = rt->region->yres / 2;
++		}
++	}
++}
++
++void init_rotate2(struct rotate2 *rt) {
++	memset(rt, 0, sizeof(*rt));
++	rt->align_center = 1;
++}
+diff --git a/sview/analog/rotate_pic_sview.c b/sview/analog/rotate_pic_sview.c
+new file mode 100644
+index 0000000..b3fc1d2
+--- /dev/null
++++ b/sview/analog/rotate_pic_sview.c
+@@ -0,0 +1,82 @@
++#include <common.h>
++#include <sview/sview.h>
++#include <sview/rotate_pic_sview.h>
++
++/* pic sview */
++
++/*
++ * see sview/rotate_pic_sview.h,
++ * those sview methods is inheritance from pic_sview
++ */
++#if 0
++#ifdef CONFIG_SLPT
++struct slpt_app_res *slpt_register_rotate_pic_sview(struct sview *view, struct slpt_app_res *parent) {
++	return slpt_register_pic_sview(view, parent);
++}
++#endif
++#endif
++
++void rotate_pic_sview_draw(struct sview *view) {
++	struct rotate_pic_sview *rpv  = to_rotate_pic_sview(view);
++	
++	rotate2_draw(&rpv->rotate, &view->base, &view->position);
++}
++
++void rotate_pic_sview_measure_size(struct sview *view) {
++	struct rotate_pic_sview *rpv  = to_rotate_pic_sview(view);
++	rotate2_measure_size(&rpv->rotate, &view->raw_rect);
++}
++
++int rotate_pic_sview_sync(struct sview *view) {
++	struct rotate_pic_sview *rpv  = to_rotate_pic_sview(view);
++	struct picture *pic;
++	int sync;
++
++	sync = pic_sview_sync(view);
++	rotate2_set_region(&rpv->rotate, pic_sview_get_region(view));
++
++	return sync;
++}
++
++void rotate_pic_sview_free(struct sview *view) {
++	struct rotate_pic_sview *rpv  = to_rotate_pic_sview(view);
++	unsigned int is_alloc = view->is_alloc;
++
++	rotate2_free_save_colors(&rpv->rotate);
++
++	view->is_alloc = 0;
++	pic_sview_free(view);
++
++	if (is_alloc)
++		free(rpv);
++}
++
++void init_rotate_pic_sview(struct rotate_pic_sview *rpv, const char *name) {
++	struct picture *pic;
++
++	init_pic_sview(&rpv->picv, name);
++
++	to_sview(rpv)->is_alloc = 0;
++	to_sview(rpv)->type = SVIEW_ROTATE_PIC;
++
++	init_rotate2(&rpv->rotate);
++	rotate2_set_align_center(&rpv->rotate, 1);
++}
++
++struct sview *alloc_rotate_pic_sview(const char *name) {
++	struct rotate_pic_sview *rpv;
++	char *cpy_name;
++
++	rpv = malloc_with_name(sizeof(*rpv), name);
++	if (!rpv) {
++		pr_err("pic_view: failed to alloc\n");
++		return NULL;
++	}
++	cpy_name = (char *)&rpv[1];
++
++	init_rotate_pic_sview(rpv, cpy_name);
++
++	to_sview(rpv)->is_alloc = 1;
++
++	return to_sview(rpv);
++}
+diff --git a/sview/analog/time/analog_am_pm_sview.c b/sview/analog/time/analog_am_pm_sview.c
+new file mode 100644
+index 0000000..981e107
+--- /dev/null
++++ b/sview/analog/time/analog_am_pm_sview.c
+@@ -0,0 +1,64 @@
++#include <common.h>
++#include <sview/analog_am_pm_sview.h>
++
++/* analog_am_pm_sview */
++
++/*
++ * see sview/analog_am_pm_sview.h,
++ * those sview methods is inheritance from analog_time_sview
++ */
++#if 0
++void analog_am_pm_sview_draw(struct sview *view) {
++	analog_time_sview_draw(view);
++}
++
++void analog_am_pm_sview_measure_size(struct sview *view) {
++	analog_time_sview_measure_size(view);
++}
++
++int analog_am_pm_sview_sync(struct sview *view) {
++	return analog_time_sview_sync(view);
++}
++
++void analog_am_pm_sview_free(struct sview *view) {
++	return analog_time_sview_free(view);
++}
++
++#ifdef CONFIG_SLPT
++struct slpt_app_res *slpt_register_analog_am_pm_sview(struct sview *view, struct slpt_app_res *parent) {
++	return slpt_register_analog_time_sview(view, parent);
++}
++#endif
++#endif
++
++int init_analog_am_pm_sview(struct analog_am_pm_sview *am_pm, const char *name) {
++
++	init_analog_time_sview(&am_pm->timev, name);
++
++	to_sview(am_pm)->is_alloc = 0;
++	to_sview(am_pm)->type = SVIEW_ANALOG_AM_PM;
++
++	analog_time_sview_set_level(to_sview(am_pm), ANALOG_TIME_AM_PM);
++	analog_time_sview_set_pic(to_sview(am_pm), "clock/am_pm_handler");
++
++	return 0;
++}
++
++struct sview *alloc_analog_am_pm_sview(const char *name) {
++	struct analog_am_pm_sview *am_pm;
++	char *cpy_name;
++
++	am_pm = malloc_with_name(sizeof(*am_pm), name);
++	if (!am_pm) {
++		pr_err("analog_am_pm_sview: failed to alloc\n");
++		return NULL;
++	}
++
++	cpy_name = (char *)&am_pm[1];
++
++	init_analog_am_pm_sview(am_pm, cpy_name);
++
++	to_sview(am_pm)->is_alloc = 1;
++
++	return to_sview(am_pm);
++}
+diff --git a/sview/analog/time/analog_day_sview.c b/sview/analog/time/analog_day_sview.c
+new file mode 100644
+index 0000000..68249da
+--- /dev/null
++++ b/sview/analog/time/analog_day_sview.c
+@@ -0,0 +1,64 @@
++#include <common.h>
++#include <sview/analog_day_sview.h>
++
++/* analog_day_sview */
++
++/*
++ * see sview/analog_day_sview.h,
++ * those sview methods is inheritance from analog_time_sview
++ */
++#if 0
++void analog_day_sview_draw(struct sview *view) {
++	analog_time_sview_draw(view);
++}
++
++void analog_day_sview_measure_size(struct sview *view) {
++	analog_time_sview_measure_size(view);
++}
++
++int analog_day_sview_sync(struct sview *view) {
++	return analog_time_sview_sync(view);
++}
++
++void analog_day_sview_free(struct sview *view) {
++	return analog_time_sview_free(view);
++}
++
++#ifdef CONFIG_SLPT
++struct slpt_app_res *slpt_register_analog_day_sview(struct sview *view, struct slpt_app_res *parent) {
++	return slpt_register_analog_time_sview(view, parent);
++}
++#endif
++#endif
++
++int init_analog_day_sview(struct analog_day_sview *day, const char *name) {
++
++	init_analog_time_sview(&day->timev, name);
++
++	to_sview(day)->is_alloc = 0;
++	to_sview(day)->type = SVIEW_ANALOG_DAY;
++
++	analog_time_sview_set_level(to_sview(day), ANALOG_TIME_DAY);
++	analog_time_sview_set_pic(to_sview(day), "clock/day_handler");
++
++	return 0;
++}
++
++struct sview *alloc_analog_day_sview(const char *name) {
++	struct analog_day_sview *day;
++	char *cpy_name;
++
++	day = malloc_with_name(sizeof(*day), name);
++	if (!day) {
++		pr_err("analog_day_sview: failed to alloc\n");
++		return NULL;
++	}
++
++	cpy_name = (char *)&day[1];
++
++	init_analog_day_sview(day, cpy_name);
++
++	to_sview(day)->is_alloc = 1;
++
++	return to_sview(day);
++}
+diff --git a/sview/analog/time/analog_hour_sview.c b/sview/analog/time/analog_hour_sview.c
+new file mode 100644
+index 0000000..a29c9ad
+--- /dev/null
++++ b/sview/analog/time/analog_hour_sview.c
+@@ -0,0 +1,64 @@
++#include <common.h>
++#include <sview/analog_hour_sview.h>
++
++/* analog_hour_sview */
++
++/*
++ * see sview/analog_hour_sview.h,
++ * those sview methods is inheritance from analog_time_sview
++ */
++#if 0
++void analog_hour_sview_draw(struct sview *view) {
++	analog_time_sview_draw(view);
++}
++
++void analog_hour_sview_measure_size(struct sview *view) {
++	analog_time_sview_measure_size(view);
++}
++
++int analog_hour_sview_sync(struct sview *view) {
++	return analog_time_sview_sync(view);
++}
++
++void analog_hour_sview_free(struct sview *view) {
++	return analog_time_sview_free(view);
++}
++
++#ifdef CONFIG_SLPT
++struct slpt_app_res *slpt_register_analog_hour_sview(struct sview *view, struct slpt_app_res *parent) {
++	return slpt_register_analog_time_sview(view, parent);
++}
++#endif
++#endif
++
++int init_analog_hour_sview(struct analog_hour_sview *hour, const char *name) {
++
++	init_analog_time_sview(&hour->timev, name);
++
++	to_sview(hour)->is_alloc = 0;
++	to_sview(hour)->type = SVIEW_ANALOG_HOUR;
++
++	analog_time_sview_set_level(to_sview(hour), ANALOG_TIME_HOUR);
++	analog_time_sview_set_pic(to_sview(hour), "clock/hour_handler");
++
++	return 0;
++}
++
++struct sview *alloc_analog_hour_sview(const char *name) {
++	struct analog_hour_sview *hour;
++	char *cpy_name;
++
++	hour = malloc_with_name(sizeof(*hour), name);
++	if (!hour) {
++		pr_err("analog_hour_sview: failed to alloc\n");
++		return NULL;
++	}
++
++	cpy_name = (char *)&hour[1];
++
++	init_analog_hour_sview(hour, cpy_name);
++
++	to_sview(hour)->is_alloc = 1;
++
++	return to_sview(hour);
++}
+diff --git a/sview/analog/time/analog_hour_with_minute_sview.c b/sview/analog/time/analog_hour_with_minute_sview.c
+new file mode 100644
+index 0000000..faa045f
+--- /dev/null
++++ b/sview/analog/time/analog_hour_with_minute_sview.c
+@@ -0,0 +1,64 @@
++#include <common.h>
++#include <sview/analog_hour_with_minute_sview.h>
++
++/* analog_hour_with_minute_sview */
++
++/*
++ * see sview/analog_hour_with_minute_sview.h,
++ * those sview methods is inheritance from analog_time_sview
++ */
++#if 0
++void analog_hour_with_minute_sview_draw(struct sview *view) {
++	analog_time_sview_draw(view);
++}
++
++void analog_hour_with_minute_sview_measure_size(struct sview *view) {
++	analog_time_sview_measure_size(view);
++}
++
++int analog_hour_with_minute_sview_sync(struct sview *view) {
++	return analog_time_sview_sync(view);
++}
++
++void analog_hour_with_minute_sview_free(struct sview *view) {
++	return analog_time_sview_free(view);
++}
++
++#ifdef CONFIG_SLPT
++struct slpt_app_res *slpt_register_analog_hour_with_minute_sview(struct sview *view, struct slpt_app_res *parent) {
++	return slpt_register_analog_time_sview(view, parent);
++}
++#endif
++#endif
++
++int init_analog_hour_with_minute_sview(struct analog_hour_with_minute_sview *hour_with_minute, const char *name) {
++
++	init_analog_time_sview(&hour_with_minute->timev, name);
++
++	to_sview(hour_with_minute)->is_alloc = 0;
++	to_sview(hour_with_minute)->type = SVIEW_ANALOG_HOUR_WITH_MINUTE;
++
++	analog_time_sview_set_level(to_sview(hour_with_minute), ANALOG_TIME_HOUR_WITH_MIN);
++	analog_time_sview_set_pic(to_sview(hour_with_minute), "clock/hour_with_minute_handler");
++
++	return 0;
++}
++
++struct sview *alloc_analog_hour_with_minute_sview(const char *name) {
++	struct analog_hour_with_minute_sview *hour_with_minute;
++	char *cpy_name;
++
++	hour_with_minute = malloc_with_name(sizeof(*hour_with_minute), name);
++	if (!hour_with_minute) {
++		pr_err("analog_hour_with_minute_sview: failed to alloc\n");
++		return NULL;
++	}
++
++	cpy_name = (char *)&hour_with_minute[1];
++
++	init_analog_hour_with_minute_sview(hour_with_minute, cpy_name);
++
++	to_sview(hour_with_minute)->is_alloc = 1;
++
++	return to_sview(hour_with_minute);
++}
+diff --git a/sview/analog/time/analog_minute_sview.c b/sview/analog/time/analog_minute_sview.c
+new file mode 100644
+index 0000000..6d5d9a1
+--- /dev/null
++++ b/sview/analog/time/analog_minute_sview.c
+@@ -0,0 +1,64 @@
++#include <common.h>
++#include <sview/analog_minute_sview.h>
++
++/* analog_minute_sview */
++
++/*
++ * see sview/analog_minute_sview.h,
++ * those sview methods is inheritance from analog_time_sview
++ */
++#if 0
++void analog_minute_sview_draw(struct sview *view) {
++	analog_time_sview_draw(view);
++}
++
++void analog_minute_sview_measure_size(struct sview *view) {
++	analog_time_sview_measure_size(view);
++}
++
++int analog_minute_sview_sync(struct sview *view) {
++	return analog_time_sview_sync(view);
++}
++
++void analog_minute_sview_free(struct sview *view) {
++	return analog_time_sview_free(view);
++}
++
++#ifdef CONFIG_SLPT
++struct slpt_app_res *slpt_register_analog_minute_sview(struct sview *view, struct slpt_app_res *parent) {
++	return slpt_register_analog_time_sview(view, parent);
++}
++#endif
++#endif
++
++int init_analog_minute_sview(struct analog_minute_sview *minute, const char *name) {
++
++	init_analog_time_sview(&minute->timev, name);
++
++	to_sview(minute)->is_alloc = 0;
++	to_sview(minute)->type = SVIEW_ANALOG_MINUTE;
++
++	analog_time_sview_set_level(to_sview(minute), ANALOG_TIME_MIN);
++	analog_time_sview_set_pic(to_sview(minute), "clock/minute_handler");
++
++	return 0;
++}
++
++struct sview *alloc_analog_minute_sview(const char *name) {
++	struct analog_minute_sview *minute;
++	char *cpy_name;
++
++	minute = malloc_with_name(sizeof(*minute), name);
++	if (!minute) {
++		pr_err("analog_minute_sview: failed to alloc\n");
++		return NULL;
++	}
++
++	cpy_name = (char *)&minute[1];
++
++	init_analog_minute_sview(minute, cpy_name);
++
++	to_sview(minute)->is_alloc = 1;
++
++	return to_sview(minute);
++}
+diff --git a/sview/analog/time/analog_month_sview.c b/sview/analog/time/analog_month_sview.c
+new file mode 100644
+index 0000000..0833933
+--- /dev/null
++++ b/sview/analog/time/analog_month_sview.c
+@@ -0,0 +1,64 @@
++#include <common.h>
++#include <sview/analog_month_sview.h>
++
++/* analog_month_sview */
++
++/*
++ * see sview/analog_month_sview.h,
++ * those sview methods is inheritance from analog_time_sview
++ */
++#if 0
++void analog_month_sview_draw(struct sview *view) {
++	analog_time_sview_draw(view);
++}
++
++void analog_month_sview_measure_size(struct sview *view) {
++	analog_time_sview_measure_size(view);
++}
++
++int analog_month_sview_sync(struct sview *view) {
++	return analog_time_sview_sync(view);
++}
++
++void analog_month_sview_free(struct sview *view) {
++	return analog_time_sview_free(view);
++}
++
++#ifdef CONFIG_SLPT
++struct slpt_app_res *slpt_register_analog_month_sview(struct sview *view, struct slpt_app_res *parent) {
++	return slpt_register_analog_time_sview(view, parent);
++}
++#endif
++#endif
++
++int init_analog_month_sview(struct analog_month_sview *month, const char *name) {
++
++	init_analog_time_sview(&month->timev, name);
++
++	to_sview(month)->is_alloc = 0;
++	to_sview(month)->type = SVIEW_ANALOG_MONTH;
++
++	analog_time_sview_set_level(to_sview(month), ANALOG_TIME_MON);
++	analog_time_sview_set_pic(to_sview(month), "clock/month_handler");
++
++	return 0;
++}
++
++struct sview *alloc_analog_month_sview(const char *name) {
++	struct analog_month_sview *month;
++	char *cpy_name;
++
++	month = malloc_with_name(sizeof(*month), name);
++	if (!month) {
++		pr_err("analog_month_sview: failed to alloc\n");
++		return NULL;
++	}
++
++	cpy_name = (char *)&month[1];
++
++	init_analog_month_sview(month, cpy_name);
++
++	to_sview(month)->is_alloc = 1;
++
++	return to_sview(month);
++}
+diff --git a/sview/analog/time/analog_second_sview.c b/sview/analog/time/analog_second_sview.c
+new file mode 100644
+index 0000000..83e4685
+--- /dev/null
++++ b/sview/analog/time/analog_second_sview.c
+@@ -0,0 +1,64 @@
++#include <common.h>
++#include <sview/analog_second_sview.h>
++
++/* analog_second_sview */
++
++/*
++ * see sview/analog_second_sview.h,
++ * those sview methods is inheritance from analog_time_sview
++ */
++#if 0
++void analog_second_sview_draw(struct sview *view) {
++	analog_time_sview_draw(view);
++}
++
++void analog_second_sview_measure_size(struct sview *view) {
++	analog_time_sview_measure_size(view);
++}
++
++int analog_second_sview_sync(struct sview *view) {
++	return analog_time_sview_sync(view);
++}
++
++void analog_second_sview_free(struct sview *view) {
++	return analog_time_sview_free(view);
++}
++
++#ifdef CONFIG_SLPT
++struct slpt_app_res *slpt_register_analog_second_sview(struct sview *view, struct slpt_app_res *parent) {
++	return slpt_register_analog_time_sview(view, parent);
++}
++#endif
++#endif
++
++int init_analog_second_sview(struct analog_second_sview *second, const char *name) {
++
++	init_analog_time_sview(&second->timev, name);
++
++	to_sview(second)->is_alloc = 0;
++	to_sview(second)->type = SVIEW_ANALOG_SECOND;
++
++	analog_time_sview_set_level(to_sview(second), ANALOG_TIME_SEC);
++	analog_time_sview_set_pic(to_sview(second), "clock/second_handler");
++
++	return 0;
++}
++
++struct sview *alloc_analog_second_sview(const char *name) {
++	struct analog_second_sview *second;
++	char *cpy_name;
++
++	second = malloc_with_name(sizeof(*second), name);
++	if (!second) {
++		pr_err("analog_second_sview: failed to alloc\n");
++		return NULL;
++	}
++
++	cpy_name = (char *)&second[1];
++
++	init_analog_second_sview(second, cpy_name);
++
++	to_sview(second)->is_alloc = 1;
++
++	return to_sview(second);
++}
+diff --git a/sview/analog/time/analog_time_sview.c b/sview/analog/time/analog_time_sview.c
+new file mode 100644
+index 0000000..74ea0ef
+--- /dev/null
++++ b/sview/analog/time/analog_time_sview.c
+@@ -0,0 +1,136 @@
++#include <common.h>
++#include <rtc_time.h>
++#include <sview/analog_time_sview.h>
++
++void analog_time_sview_set_level(struct sview *view, unsigned int level) {
++	struct analog_time_sview *timev = to_analog_time_sview(view);
++	unsigned int notify_level = 0;
++
++	assert(level < ANALOG_TIME_NUMS);
++
++	switch (level) {
++	case ANALOG_TIME_SEC:
++		notify_level = TIME_TICK_SEC;
++		break;
++	case ANALOG_TIME_MIN:
++		notify_level = TIME_TICK_MIN;
++		break;
++	case ANALOG_TIME_HOUR_WITH_MIN:
++		notify_level = TIME_TICK_MIN;
++		break;
++	case ANALOG_TIME_HOUR:
++		notify_level = TIME_TICK_HOUR;
++		break;
++	case ANALOG_TIME_AM_PM:
++		notify_level = TIME_TICK_HOUR;
++		break;
++	default:
++		notify_level = TIME_TICK_DAY;
++		break;
++	}
++
++	timev->level = level;
++	unregister_time_notify(&timev->no);
++	register_time_notify(&timev->no, notify_level);
++}
++
++void analog_time_sview_set_tm(struct sview *view, struct rtc_time *tm) {
++	struct analog_time_sview *timev = to_analog_time_sview(view);
++	unsigned int angle;
++
++	switch (timev->level) {
++	case ANALOG_TIME_SEC:    angle = tm->tm_sec * 6; break;
++	case ANALOG_TIME_MIN:    angle = tm->tm_min * 6; break;
++	case ANALOG_TIME_HOUR:   angle = tm->tm_hour * 30; break;
++	case ANALOG_TIME_DAY:    angle = (tm->tm_mday * 360) / 31; break;
++	case ANALOG_TIME_WEEK:   angle = (tm->tm_wday * 360) / 7; break;
++	case ANALOG_TIME_MON:    angle = tm->tm_mon * 30; break;
++
++	case ANALOG_TIME_HOUR_WITH_MIN:
++	                         angle = tm->tm_hour * 30 + ((tm->tm_min * 30) / 60); 
++		                     angle = angle - angle % 6; break;
++	case ANALOG_TIME_AM_PM:  angle = tm->tm_hour < 12 ? 0 : 180; break;
++	default: angle = 0; break;
++	}
++
++	analog_time_sview_set_angle(to_sview(timev), angle);
++}
++
++static void analog_time_sview_time_callback(struct time_notify *no, struct rtc_time *tm) {
++	struct analog_time_sview *timev = container_of(no, struct analog_time_sview, no);
++
++	analog_time_sview_set_tm(to_sview(timev), tm);
++}
++
++/* analog_time_sview */
++
++/*
++ * see sview/analog_time_sview.h,
++ * those sview methods is inheritance from rotate_pic_sview
++ */
++#if 0
++void analog_time_sview_draw(struct sview *view) {
++	rotate_pic_sview_draw(view);
++}
++
++void analog_time_sview_measure_size(struct sview *view) {
++	rotate_pic_sview_measure_size(view);
++}
++
++int analog_time_sview_sync(struct sview *view) {
++	return rotate_pic_sview_sync(view);
++}
++
++#ifdef CONFIG_SLPT
++struct slpt_app_res *slpt_register_analog_time_sview(struct sview *view, struct slpt_app_res *parent) {
++	return slpt_register_rotate_pic_sview(view, parent);
++}
++#endif
++#endif
++
++void analog_time_sview_free(struct sview *view) {
++	struct analog_time_sview *timev = to_analog_time_sview(view);
++	unsigned int is_alloc = view->is_alloc;
++
++	unregister_time_notify(&timev->no);
++
++	view->is_alloc = 0;
++	rotate_pic_sview_free(view);
++
++	if (is_alloc)
++		free(timev);
++}
++
++int init_analog_time_sview(struct analog_time_sview *timev, const char *name) {
++
++	init_rotate_pic_sview(&timev->rpv, name);
++
++	to_sview(timev)->is_alloc = 0;
++	to_sview(timev)->type = SVIEW_ANALOG_TIME;
++
++	timev->level = ANALOG_TIME_SEC;
++	timev->no.callback = analog_time_sview_time_callback;
++	register_time_notify(&timev->no, TIME_TICK_SEC);
++
++	return 0;
++}
++
++struct sview *alloc_analog_time_sview(const char *name) {
++	struct analog_time_sview *timev;
++	char *cpy_name;
++
++	timev = malloc_with_name(sizeof(*timev), name);
++	if (!timev) {
++		pr_err("analog_time_sview: failed to alloc\n");
++		return NULL;
++	}
++
++	cpy_name = (char *)&timev[1];
++
++	init_analog_time_sview(timev, cpy_name);
++
++	to_sview(timev)->is_alloc = 1;
++
++	return to_sview(timev);
++}
++
+diff --git a/sview/analog/time/analog_week_sview.c b/sview/analog/time/analog_week_sview.c
+new file mode 100644
+index 0000000..399ecfa
+--- /dev/null
++++ b/sview/analog/time/analog_week_sview.c
+@@ -0,0 +1,64 @@
++#include <common.h>
++#include <sview/analog_week_sview.h>
++
++/* analog_week_sview */
++
++/*
++ * see sview/analog_week_sview.h,
++ * those sview methods is inheritance from analog_time_sview
++ */
++#if 0
++void analog_week_sview_draw(struct sview *view) {
++	analog_time_sview_draw(view);
++}
++
++void analog_week_sview_measure_size(struct sview *view) {
++	analog_time_sview_measure_size(view);
++}
++
++int analog_week_sview_sync(struct sview *view) {
++	return analog_time_sview_sync(view);
++}
++
++void analog_week_sview_free(struct sview *view) {
++	return analog_time_sview_free(view);
++}
++
++#ifdef CONFIG_SLPT
++struct slpt_app_res *slpt_register_analog_week_sview(struct sview *view, struct slpt_app_res *parent) {
++	return slpt_register_analog_time_sview(view, parent);
++}
++#endif
++#endif
++
++int init_analog_week_sview(struct analog_week_sview *week, const char *name) {
++
++	init_analog_time_sview(&week->timev, name);
++
++	to_sview(week)->is_alloc = 0;
++	to_sview(week)->type = SVIEW_ANALOG_WEEK;
++
++	analog_time_sview_set_level(to_sview(week), ANALOG_TIME_WEEK);
++	analog_time_sview_set_pic(to_sview(week), "clock/week_handler");
++
++	return 0;
++}
++
++struct sview *alloc_analog_week_sview(const char *name) {
++	struct analog_week_sview *week;
++	char *cpy_name;
++
++	week = malloc_with_name(sizeof(*week), name);
++	if (!week) {
++		pr_err("analog_week_sview: failed to alloc\n");
++		return NULL;
++	}
++
++	cpy_name = (char *)&week[1];
++
++	init_analog_week_sview(week, cpy_name);
++
++	to_sview(week)->is_alloc = 1;
++
++	return to_sview(week);
++}
+diff --git a/sview/core/absolute_layout.c b/sview/core/absolute_layout.c
+index 2f5afba..409a48f 100644
+--- a/sview/core/absolute_layout.c
++++ b/sview/core/absolute_layout.c
+@@ -24,19 +24,24 @@ void absolute_layout_add_array(struct sview *view, struct sview **array, unsigne
+ 
+ void absolute_layout_draw(struct sview *view) {
+ 	struct absolute_layout *layout = to_absolute_layout(view);
++	struct position *start = &view->position;
+ 	struct sview *v;
+ 	struct list_head *p, *n;
++	unsigned char align;
+ 	int tmp = 0;
+ 
++	printf ("position x y: %d %d\n", start->x, start->y);
++
+ 	list_for_each_safe(p, n, &view->grp) {
+ 		v = list_entry(p, struct sview, link);
+-		if (!v->show)
++		if (!sview_can_be_show(v))
+ 			continue;
+ 
+ 		if (v->center_horizontal) {
+ 			v->position.x = ((int) view->rect.w - (int) v->rect.w) / 2;
+ 		} else {
+-			switch (v->align_x) {
++			align = sview_align(v->align_parent_x, view->align_x);
++			switch (align) {
+ 			case ALIGN_LEFT:
+ 				tmp = 0;
+ 				break;
+@@ -55,7 +60,8 @@ void absolute_layout_draw(struct sview *view) {
+ 		if (v->center_vertical) {
+ 			v->position.y = ((int) view->rect.h - (int) v->rect.h) / 2;
+ 		} else {
+-			switch (v->align_y) {
++			align = sview_align(v->align_parent_y, view->align_y);
++			switch (align) {
+ 			case ALIGN_TOP:
+ 				tmp = 0;
+ 				break;
+@@ -71,6 +77,8 @@ void absolute_layout_draw(struct sview *view) {
+ 			v->position.y = v->raw_position.y - tmp;
+ 		}
+ 
++		v->position.x += start->x;
++		v->position.y += start->y;
+ 		v->base = view->base;
+ 
+ 		sview_draw(v);
+@@ -86,10 +94,11 @@ void absolute_layout_measure_size(struct sview *view) {
+ 	int y_end = 0;
+ 	int width = 0;
+ 	int height = 0;
++	unsigned char align;
+ 
+ 	list_for_each_safe(pos, n, &view->grp) {
+ 		v = list_entry(pos, struct sview, link);
+-		if (!v->show)
++		if (!sview_can_be_show(v))
+ 			continue;
+ 
+ 		sview_measure_size(v);
+@@ -97,7 +106,8 @@ void absolute_layout_measure_size(struct sview *view) {
+ 		if (v->center_horizontal) {
+ 			x_end = v->rect.w;
+ 		} else {
+-			switch (v->align_x) {
++			align = sview_align(v->align_parent_x, view->align_x);
++			switch (align) {
+ 			case ALIGN_LEFT:
+ 				x_end = (int) v->rect.w;
+ 				break;
+@@ -116,7 +126,8 @@ void absolute_layout_measure_size(struct sview *view) {
+ 		if (v->center_vertical) {
+ 			y_end = v->rect.h;
+ 		} else {
+-			switch (v->align_y) {
++			align = sview_align(v->align_parent_y, view->align_y);
++			switch (align) {
+ 			case ALIGN_TOP:
+ 				y_end = (int) v->rect.h;
+ 				break;
+@@ -158,16 +169,11 @@ void absolute_layout_free(struct sview *view) {
+ }
+ 
+ #ifdef CONFIG_SLPT
+-static struct slpt_app_res absolute_layout_res[] = {
+-	SLPT_RES_EMPTY_DEF("orientation", SLPT_RES_INT),     /* picture */
+-};
+-
+ struct slpt_app_res *slpt_register_absolute_layout(struct sview *view, struct slpt_app_res *parent) {
+ 	struct absolute_layout *layout = to_absolute_layout(view);
+ 	struct slpt_app_res *res;
+ 
+-	slpt_set_res(absolute_layout_res[0], &layout->orientation, 1);
+-	res = slpt_register_sview_base(view, parent, absolute_layout_res, ARRAY_SIZE(absolute_layout_res));
++	res = slpt_register_sview_base(view, parent, NULL, 0);
+ 	if (!res)
+ 		return NULL;
+ 
+diff --git a/sview/core/background.c b/sview/core/background.c
+index 5a1a31a..27e9526 100644
+--- a/sview/core/background.c
++++ b/sview/core/background.c
+@@ -2,6 +2,15 @@
+ #include <sview/sview.h>
+ #include <sview/sview_background.h>
+ 
++int background_set_pic(struct background *background, const char *pic_name) {
++	if (pic_name == NULL || strlen(pic_name) >= sizeof(background->pic_name))
++		return -EINVAL;
++
++	strcpy(background->pic_name, pic_name);
++
++	return 0;
++}
++
+ int background_sync_setting(struct background *background) {
+ 	struct picture *pic;
+ 	int sync;
+@@ -30,3 +39,14 @@ void background_write_to_target(struct background *background, struct fb_region
+ 		fb_region_clear(base, background->color);
+ 	}
+ }
++
++void background_write_to_target_no_alpha(struct background *background, struct fb_region *base, struct position *pos) {
++	if (background->pic != NULL) {
++		fb_region_write(base, picture_region(background->pic), pos);
++		return;
++	}
++
++	if (background->color != INVALID_COLOR) {
++		fb_region_clear(base, background->color);
++	}
++}
+diff --git a/sview/core/frame_layout.c b/sview/core/frame_layout.c
+new file mode 100644
+index 0000000..48ba200
+--- /dev/null
++++ b/sview/core/frame_layout.c
+@@ -0,0 +1,180 @@
++#include <common.h>
++#include <sview/sview.h>
++#include <sview/sview_grp.h>
++#include <sview/frame_layout.h>
++
++void frame_layout_add(struct sview *view, struct sview *child) {
++	if (!child)
++		return;
++
++	sview_grp_add_by_level(&view->grp, child);
++	child->parent = view;
++}
++
++void frame_layout_add_array(struct sview *view, struct sview **array, unsigned int size) {
++	unsigned int i;
++
++	if (!(array && size))
++		return;
++
++	for (i = 0; i < size; ++i) {
++		frame_layout_add(view, array[i]);
++	}
++}
++
++void frame_layout_draw(struct sview *view) {
++	struct frame_layout *layout = to_frame_layout(view);
++	struct fb_region *base = &view->base;
++	struct position *start = &view->position;
++	struct sview *v;
++	struct list_head *p, *n;
++	unsigned char align;
++
++	list_for_each_safe(p, n, &view->grp) {
++		v = list_entry(p, struct sview, link);
++		if (!sview_can_be_show(v))
++			continue;
++
++		if (v->center_horizontal) {
++			v->position.x = ((int) view->rect.w - (int) v->rect.w) / 2;
++		} else {
++			align = sview_align(v->align_parent_x, view->align_x);
++			switch (align) {
++			case ALIGN_LEFT:
++				v->position.x = v->padding.left;
++				break;
++			case ALIGN_RIGHT:
++				v->position.x = (int) view->rect.w - (int) (v->rect.w + v->padding.right);
++				break;
++			case ALIGN_CENTER:
++				v->position.x = ((int) view->rect.w - (int) v->rect.w) / 2;
++				break;
++			default:
++				break;
++			}
++		}
++		v->position.x += start->x;
++
++		if (v->center_vertical) {
++			v->position.y = ((int) view->rect.h - (int) v->rect.h) / 2;
++		} else {
++			align = sview_align(v->align_parent_y, view->align_y);
++			switch (align) {
++			case ALIGN_TOP:
++				v->position.y = v->padding.top;
++				break;
++			case ALIGN_BOTTOM:
++				v->position.y = (int) view->rect.h - (int) (v->rect.h + v->padding.bottom);
++				break;
++			case ALIGN_CENTER:
++				v->position.y = ((int) view->rect.h - (int) v->rect.h) / 2;
++				break;
++			default:
++				break;
++			}
++		}
++		v->position.y += start->y;
++
++		v->base = view->base;
++		sview_draw(v);
++	}
++
++}
++
++void frame_layout_measure_size(struct sview *view) {
++	struct frame_layout *layout = to_frame_layout(view);
++	struct sview *v;
++	struct list_head *pos, *n;
++
++	unsigned int width = 0;
++	unsigned int height = 0;
++	unsigned int tmp;
++	unsigned char align;
++
++	list_for_each_safe(pos, n, &view->grp) {
++		v = list_entry(pos, struct sview, link);
++		if (!sview_can_be_show(v))
++			continue;
++
++		sview_measure_size(v);
++
++		align = sview_align(v->align_parent_x, view->align_x);
++		if (align == ALIGN_CENTER || v->center_horizontal) {
++			if (width < v->rect.w)
++				width = v->rect.w;
++		} else {
++			tmp = v->rect.w + v->padding.left + v->padding.right;
++			if (width < tmp)
++				width = tmp;
++		}
++
++		align = sview_align(v->align_parent_y, view->align_y);
++		if (align == ALIGN_CENTER || v->center_vertical) {
++			if (height < v->rect.h)
++				height = v->rect.h;
++		} else {
++			tmp = v->rect.h + v->padding.top + v->padding.bottom;
++			if (height < tmp)
++				height = tmp;
++		}
++	}
++
++	view->raw_rect.w = width;
++	view->raw_rect.h = height;
++}
++
++int frame_layout_sync(struct sview *view) {
++	struct frame_layout *layout = to_frame_layout(view);
++
++	return sview_grp_sync(&view->grp);
++}
++
++void frame_layout_free(struct sview *view) {
++	struct frame_layout *layout = to_frame_layout(view);
++
++	sview_grp_free(&view->grp);
++
++	if (view->is_alloc)
++		free(layout);
++}
++
++#ifdef CONFIG_SLPT
++struct slpt_app_res *slpt_register_frame_layout(struct sview *view, struct slpt_app_res *parent) {
++	struct frame_layout *layout = to_frame_layout(view);
++	struct slpt_app_res *res;
++
++	res = slpt_register_sview_base(view, parent, NULL, 0);
++	if (!res)
++		return NULL;
++
++	if (!slpt_register_sview_grp(&view->grp, res)) {
++		slpt_kernel_unregister_app_res(res, uboot_slpt_task);
++		res = NULL;
++	}
++
++	return res;
++}
++#endif
++
++void init_frame_layout(struct frame_layout *layout, const char *name) {
++	sview_init_base(&layout->view, name, SVIEW_FRAME_LAYOUT);
++}
++
++struct sview *alloc_frame_layout(const char *name) {
++	struct frame_layout *layout;
++	char *cpy_name;
++
++	layout = malloc_with_name(sizeof(*layout), name);
++	if (!layout) {
++		pr_err("frame_layout: failed to alloc\n");
++		return NULL;
++	}
++	cpy_name = (char *) &layout[1];
++
++	init_frame_layout(layout, cpy_name);
++
++	layout->view.is_alloc = 1;
++
++	return &layout->view;
++}
++
+diff --git a/sview/core/linear_layout.c b/sview/core/linear_layout.c
+index be31acd..ea74ac7 100644
+--- a/sview/core/linear_layout.c
++++ b/sview/core/linear_layout.c
+@@ -39,27 +39,33 @@ void linear_layout_draw(struct sview *view) {
+ 	struct fb_region *base = &view->base;
+ 	struct position *start = &view->position;
+ 	struct position position = *start;
++	unsigned char align;
+ 	struct sview *v;
+ 	struct list_head *p, *n;
+ 
+ 	if (layout->orientation == HORIZONTAL) {
+ 		list_for_each_safe(p, n, &view->grp) {
+ 			v = list_entry(p, struct sview, link);
+-			if (!v->show)
++			if (!sview_can_be_show(v))
+ 				continue;
+ 
+-			switch (view->align_y) {
+-			case ALIGN_TOP:
+-				position.y = v->padding.top;
+-				break;
+-			case ALIGN_BOTTOM:
+-				position.y = (int) view->raw_rect.h - (int) (v->rect.h + v->padding.bottom);
+-				break;
+-			case ALIGN_CENTER:
+-				position.y = ((int) view->raw_rect.h - (int) v->rect.h) / 2;
+-				break;
+-			default:
+-				break;
++			if (v->center_vertical) {
++				position.y = ((int) view->rect.h - (int) v->rect.h) / 2;
++			} else {
++				align = sview_align(v->align_parent_y, view->align_y);
++				switch (align) {
++				case ALIGN_TOP:
++					position.y = v->padding.top;
++					break;
++				case ALIGN_BOTTOM:
++					position.y = (int) view->rect.h - (int) (v->rect.h + v->padding.bottom);
++					break;
++				case ALIGN_CENTER:
++					position.y = ((int) view->rect.h - (int) v->rect.h) / 2;
++					break;
++				default:
++					break;
++				}
+ 			}
+ 			position.y += start->y;
+ 			position.x += v->padding.left;
+@@ -74,21 +80,26 @@ void linear_layout_draw(struct sview *view) {
+ 	} else { /* VERTICAL */
+ 		list_for_each_safe(p, n, &view->grp) {
+ 			v = list_entry(p, struct sview, link);
+-			if (!v->show)
++			if (!sview_can_be_show(v))
+ 				continue;
+ 
+-			switch (view->align_x) {
+-			case ALIGN_LEFT:
+-				position.x = v->padding.left;
+-				break;
+-			case ALIGN_RIGHT:
+-				position.x = (int) view->raw_rect.w - (int) (v->rect.w + v->padding.right);
+-				break;
+-			case ALIGN_CENTER:
+-				position.x = ((int) view->raw_rect.w - (int) v->rect.w) / 2;
+-				break;
+-			default:
+-				break;
++			if (v->center_horizontal) {
++				position.x = ((int) view->rect.w - (int) v->rect.w) / 2;
++			} else {
++				align = sview_align(v->align_parent_x, view->align_x);
++				switch (align) {
++				case ALIGN_LEFT:
++					position.x = v->padding.left;
++					break;
++				case ALIGN_RIGHT:
++					position.x = (int) view->rect.w - (int) (v->rect.w + v->padding.right);
++					break;
++				case ALIGN_CENTER:
++					position.x = ((int) view->rect.w - (int) v->rect.w) / 2;
++					break;
++				default:
++					break;
++				}
+ 			}
+ 			position.x += start->x;
+ 			position.y += v->padding.top;
+@@ -111,16 +122,18 @@ void linear_layout_measure_size(struct sview *view) {
+ 	unsigned int width = 0;
+ 	unsigned int height = 0;
+ 	unsigned int tmp;
++	unsigned char align;
+ 
+ 	if (layout->orientation == HORIZONTAL) {
+ 		list_for_each_safe(pos, n, &view->grp) {
+ 			v = list_entry(pos, struct sview, link);
+-			if (!v->show)
++			if (!sview_can_be_show(v))
+ 				continue;
+ 
+ 			sview_measure_size(v);
+ 			width += v->rect.w + v->padding.left + v->padding.right;
+-			if (view->align_y == ALIGN_CENTER) {
++			align = sview_align(v->align_parent_y, view->align_y);
++			if (align == ALIGN_CENTER || v->center_vertical) {
+ 				if (height < v->rect.h)
+ 					height = v->rect.h;
+ 			} else {
+@@ -132,12 +145,13 @@ void linear_layout_measure_size(struct sview *view) {
+ 	} else { /* VERTICAL */
+ 		list_for_each_safe(pos, n, &view->grp) {
+ 			v = list_entry(pos, struct sview, link);
+-			if (!v->show)
++			if (!sview_can_be_show(v))
+ 				continue;
+ 
+ 			sview_measure_size(v);
+ 			height += v->rect.h + v->padding.top + v->padding.bottom;
+-			if (view->align_x == ALIGN_CENTER) {
++			align = sview_align(v->align_parent_x, view->align_x);
++			if (align == ALIGN_CENTER || v->center_horizontal) {
+ 				if (width < v->rect.w)
+ 					width = v->rect.w;
+ 			} else {
+diff --git a/sview/core/root_sview.c b/sview/core/root_sview.c
+index b8c14ae..21fadf8 100644
+--- a/sview/core/root_sview.c
++++ b/sview/core/root_sview.c
+@@ -12,16 +12,33 @@ void root_sview_sync_setting(void) {
+ }
+ 
+ void root_sview_measure_size(void) {
++	struct fb_region *region;
++
+ 	if (!root_sview)
+ 		return;
+ 
++	/* to fit the frame buffer size */
++	region = get_current_fb_region();
++	root_sview->rect.w = region->xres;
++	root_sview->rect.h = region->yres;
++	root_sview->desc_w = RECT_SPECIFY;
++	root_sview->desc_h = RECT_SPECIFY;
++	root_sview->align_x = ALIGN_LEFT;
++	root_sview->align_y = ALIGN_TOP;
++
+ 	sview_measure_size(root_sview);
+ }
+ 
+ void root_sview_draw(void) {
++	struct picture *save_pic;
++	unsigned int save_color;
++
+ 	if (!root_sview)
+ 		return;
+ 
++	save_pic = background_picture(&root_sview->background);
++	save_color = background_color(&root_sview->background);
++
+ 	/* position set to (0, 0) */
+ 	root_sview->raw_position.x = 0;
+ 	root_sview->raw_position.y = 0;
+@@ -29,7 +46,16 @@ void root_sview_draw(void) {
+ 
+ 	/* base fb_region is frame buffer */
+ 	root_sview->base = *get_current_fb_region();
++
++	/* write background with no alpha method, it will a little faster */
++	background_write_to_target_no_alpha(&root_sview->background, &root_sview->base, &root_sview->position);
++	background_set_color(&root_sview->background, INVALID_COLOR);
++	background_set_picture(&root_sview->background, NULL);
++
+ 	sview_draw(root_sview);
++
++	background_set_picture(&root_sview->background, save_pic);
++	background_set_color(&root_sview->background, save_color);
+ }
+ 
+ void root_sview_free(void) {
+diff --git a/sview/core/sview.c b/sview/core/sview.c
+index cf0210b..e21b43c 100644
+--- a/sview/core/sview.c
++++ b/sview/core/sview.c
+@@ -7,6 +7,8 @@ void sview_init_base(struct sview *view, const char *name, unsigned int type) {
+ 	view->type = type;
+ 	view->show = 1;
+ 	view->background.color = INVALID_COLOR;
++	view->align_parent_x = ALIGN_BY_PARENT;
++	view->align_parent_y = ALIGN_BY_PARENT;
+ 	INIT_LIST_HEAD(&view->grp);
+ 	INIT_LIST_HEAD(&view->link);
+ }
+@@ -26,6 +28,12 @@ int sview_sync_setting(struct sview *view) {
+ 	if (view->desc_h > RECT_SPECIFY)
+ 		view->desc_h = RECT_FIT_BACKGROUND;
+ 
++	if (view->align_parent_x > ALIGN_BY_PARENT)
++		view->align_parent_x = ALIGN_BY_PARENT;
++
++	if (view->align_parent_y > ALIGN_BY_PARENT)
++		view->align_parent_y = ALIGN_BY_PARENT;
++
+ 	background_sync_setting(&view->background);
+ 
+ 	sync = sview_method_sync_setting[view->type](view);
+@@ -192,6 +200,8 @@ static struct slpt_app_res view_res[] = {
+ 	SLPT_RES_EMPTY_DEF("desc-h", SLPT_RES_INT),
+ 	SLPT_RES_EMPTY_DEF("center-horizontal", SLPT_RES_INT),
+ 	SLPT_RES_EMPTY_DEF("center-vertical", SLPT_RES_INT),
++	SLPT_RES_EMPTY_DEF("align-parent-x", SLPT_RES_INT),
++	SLPT_RES_EMPTY_DEF("align-parent-y", SLPT_RES_INT),
+ 	SLPT_RES_EMPTY_DEF("show", SLPT_RES_INT),
+ };
+ 
+@@ -220,7 +230,9 @@ struct slpt_app_res *slpt_register_sview_base(struct sview *view,
+ 	slpt_set_res(view_res[15], &view->desc_h, 1);
+ 	slpt_set_res(view_res[16], &view->center_horizontal, 1);
+ 	slpt_set_res(view_res[17], &view->center_vertical, 1);
+-	slpt_set_res(view_res[18], &view->show, 1);
++	slpt_set_res(view_res[18], &view->align_parent_x, 1);
++	slpt_set_res(view_res[19], &view->align_parent_y, 1);
++	slpt_set_res(view_res[20], &view->show, 1);
+ 
+ 	res = slpt_kernel_register_app_dir_res(&tmp, parent);
+ 	if (!res) {
+diff --git a/sview/core/sview_grp.c b/sview/core/sview_grp.c
+index f08bc50..7d5e9d7 100644
+--- a/sview/core/sview_grp.c
++++ b/sview/core/sview_grp.c
+@@ -55,11 +55,24 @@ void sview_grp_sort(struct list_head *grp) {
+ int sview_grp_sync(struct list_head *grp) {
+ 	struct sview *v;
+ 	struct list_head *pos, *n;
++
++	list_for_each_safe(pos, n, grp) {
++		v = list_entry(pos, struct sview, link);
++		sview_sync_setting(v);
++	}
++
++	return 0;
++}
++
++int sview_grp_sync_strictly(struct list_head *grp) {
++	struct sview *v;
++	struct list_head *pos, *n;
+ 	int sync = 0;
+ 
+ 	list_for_each_safe(pos, n, grp) {
+ 		v = list_entry(pos, struct sview, link);
+-		sync += !!sview_sync_setting(v);
++		if (sview_sync_setting(v) && v->show)
++			sync += 1;
+ 	}
+ 
+ 	return sync;
+diff --git a/sview/core/sview_methods.c b/sview/core/sview_methods.c
+index 3c560e1..d010783 100644
+--- a/sview/core/sview_methods.c
++++ b/sview/core/sview_methods.c
+@@ -17,6 +17,7 @@ void (*sview_method_init_view[SVIEW_NUMS])(void *view, const char *name) = {
+ 	[SVIEW_NUM] = (init_sview_type)init_num_sview,
+ 	[SVIEW_LINEAR_LAYOUT] = (init_sview_type)init_linear_layout,
+ 	[SVIEW_ABSOLUTE_LAYOUT] = (init_sview_type)init_absolute_layout,
++	[SVIEW_FRAME_LAYOUT] = (init_sview_type)init_frame_layout,
+ 	[SVIEW_TIME_NUM] = (init_sview_type)init_time_num_sview,
+ 	[SVIEW_SECOND_L] = (init_sview_type)init_secondL_sview,
+ 	[SVIEW_SECOND_H] = (init_sview_type)init_secondH_sview,
+@@ -33,6 +34,16 @@ void (*sview_method_init_view[SVIEW_NUMS])(void *view, const char *name) = {
+ 	[SVIEW_YEAR1] = (init_sview_type)init_year1_sview,
+ 	[SVIEW_YEAR2] = (init_sview_type)init_year2_sview,
+ 	[SVIEW_YEAR3] = (init_sview_type)init_year3_sview,
++	[SVIEW_ROTATE_PIC] = (init_sview_type)init_rotate_pic_sview,
++	[SVIEW_ANALOG_TIME] = (init_sview_type)init_analog_time_sview,
++	[SVIEW_ANALOG_SECOND] = (init_sview_type)init_analog_second_sview,
++	[SVIEW_ANALOG_MINUTE] = (init_sview_type)init_analog_minute_sview,
++	[SVIEW_ANALOG_HOUR] = (init_sview_type)init_analog_hour_sview,
++	[SVIEW_ANALOG_DAY] = (init_sview_type)init_analog_day_sview,
++	[SVIEW_ANALOG_WEEK] = (init_sview_type)init_analog_week_sview,
++	[SVIEW_ANALOG_MONTH] = (init_sview_type)init_analog_month_sview,
++	[SVIEW_ANALOG_AM_PM] = (init_sview_type)init_analog_am_pm_sview,
++	[SVIEW_ANALOG_HOUR_WITH_MINUTE] = (init_sview_type)init_analog_hour_with_minute_sview,
+ };
+ 
+ /**
+@@ -43,6 +54,7 @@ struct sview * (*sview_method_alloc_view[SVIEW_NUMS])(const char *name) = {
+ 	[SVIEW_NUM] = alloc_num_sview,
+ 	[SVIEW_LINEAR_LAYOUT] = alloc_linear_layout,
+ 	[SVIEW_ABSOLUTE_LAYOUT] = alloc_absolute_layout,
++	[SVIEW_FRAME_LAYOUT] = alloc_frame_layout,
+ 	[SVIEW_TIME_NUM] = alloc_time_num_sview,
+ 	[SVIEW_SECOND_L] = alloc_secondL_sview,
+ 	[SVIEW_SECOND_H] = alloc_secondH_sview,
+@@ -59,6 +71,16 @@ struct sview * (*sview_method_alloc_view[SVIEW_NUMS])(const char *name) = {
+ 	[SVIEW_YEAR1] = alloc_year1_sview,
+ 	[SVIEW_YEAR2] = alloc_year2_sview,
+ 	[SVIEW_YEAR3] = alloc_year3_sview,
++	[SVIEW_ROTATE_PIC] = alloc_rotate_pic_sview,
++	[SVIEW_ANALOG_TIME] = alloc_analog_time_sview,
++	[SVIEW_ANALOG_SECOND] = alloc_analog_second_sview,
++	[SVIEW_ANALOG_MINUTE] = alloc_analog_minute_sview,
++	[SVIEW_ANALOG_HOUR] = alloc_analog_hour_sview,
++	[SVIEW_ANALOG_DAY] = alloc_analog_day_sview,
++	[SVIEW_ANALOG_WEEK] = alloc_analog_week_sview,
++	[SVIEW_ANALOG_MONTH] = alloc_analog_month_sview,
++	[SVIEW_ANALOG_AM_PM] = alloc_analog_am_pm_sview,
++	[SVIEW_ANALOG_HOUR_WITH_MINUTE] = alloc_analog_hour_with_minute_sview,
+ };
+ 
+ /**
+@@ -69,6 +91,7 @@ void (*sview_method_measure_size[SVIEW_NUMS])(struct sview *view) = {
+ 	[SVIEW_NUM] = num_sview_measure_size,
+ 	[SVIEW_LINEAR_LAYOUT] = linear_layout_measure_size,
+ 	[SVIEW_ABSOLUTE_LAYOUT] = absolute_layout_measure_size,
++	[SVIEW_FRAME_LAYOUT] = frame_layout_measure_size,
+ 	[SVIEW_TIME_NUM] = time_num_sview_measure_size,
+ 	[SVIEW_SECOND_L] = secondL_sview_measure_size,
+ 	[SVIEW_SECOND_H] = secondH_sview_measure_size,
+@@ -85,6 +108,16 @@ void (*sview_method_measure_size[SVIEW_NUMS])(struct sview *view) = {
+ 	[SVIEW_YEAR1] = year1_sview_measure_size,
+ 	[SVIEW_YEAR2] = year2_sview_measure_size,
+ 	[SVIEW_YEAR3] = year3_sview_measure_size,
++	[SVIEW_ROTATE_PIC] = rotate_pic_sview_measure_size,
++	[SVIEW_ANALOG_TIME] = analog_time_sview_measure_size,
++	[SVIEW_ANALOG_SECOND] = analog_second_sview_measure_size,
++	[SVIEW_ANALOG_MINUTE] = analog_minute_sview_measure_size,
++	[SVIEW_ANALOG_HOUR] = analog_hour_sview_measure_size,
++	[SVIEW_ANALOG_DAY] = analog_day_sview_measure_size,
++	[SVIEW_ANALOG_WEEK] = analog_week_sview_measure_size,
++	[SVIEW_ANALOG_MONTH] = analog_month_sview_measure_size,
++	[SVIEW_ANALOG_AM_PM] = analog_am_pm_sview_measure_size,
++	[SVIEW_ANALOG_HOUR_WITH_MINUTE] = analog_hour_with_minute_sview_measure_size,
+ };
+ 
+ /**
+@@ -95,6 +128,7 @@ void (*sview_method_draw[SVIEW_NUMS])(struct sview *view) = {
+ 	[SVIEW_NUM] = num_sview_draw,
+ 	[SVIEW_LINEAR_LAYOUT] = linear_layout_draw,
+ 	[SVIEW_ABSOLUTE_LAYOUT] = absolute_layout_draw,
++	[SVIEW_FRAME_LAYOUT] = frame_layout_draw,
+ 	[SVIEW_SECOND_L] = secondL_sview_draw,
+ 	[SVIEW_SECOND_H] = secondH_sview_draw,
+ 	[SVIEW_MINUTE_L] = minuteL_sview_draw,
+@@ -110,6 +144,16 @@ void (*sview_method_draw[SVIEW_NUMS])(struct sview *view) = {
+ 	[SVIEW_YEAR1] = year1_sview_draw,
+ 	[SVIEW_YEAR2] = year2_sview_draw,
+ 	[SVIEW_YEAR3] = year3_sview_draw,
++	[SVIEW_ROTATE_PIC] = rotate_pic_sview_draw,
++	[SVIEW_ANALOG_TIME] = analog_time_sview_draw,
++	[SVIEW_ANALOG_SECOND] = analog_second_sview_draw,
++	[SVIEW_ANALOG_MINUTE] = analog_minute_sview_draw,
++	[SVIEW_ANALOG_HOUR] = analog_hour_sview_draw,
++	[SVIEW_ANALOG_DAY] = analog_day_sview_draw,
++	[SVIEW_ANALOG_WEEK] = analog_week_sview_draw,
++	[SVIEW_ANALOG_MONTH] = analog_month_sview_draw,
++	[SVIEW_ANALOG_AM_PM] = analog_am_pm_sview_draw,
++	[SVIEW_ANALOG_HOUR_WITH_MINUTE] = analog_hour_with_minute_sview_draw,
+ };
+ 
+ /**
+@@ -120,6 +164,7 @@ int (*sview_method_sync_setting[SVIEW_NUMS])(struct sview *view) = {
+ 	[SVIEW_NUM] = num_sview_sync,
+ 	[SVIEW_LINEAR_LAYOUT] = linear_layout_sync,
+ 	[SVIEW_ABSOLUTE_LAYOUT] = absolute_layout_sync,
++	[SVIEW_FRAME_LAYOUT] = frame_layout_sync,
+ 	[SVIEW_TIME_NUM] = time_num_sview_sync,
+ 	[SVIEW_SECOND_L] = secondL_sview_sync,
+ 	[SVIEW_SECOND_H] = secondH_sview_sync,
+@@ -136,6 +181,16 @@ int (*sview_method_sync_setting[SVIEW_NUMS])(struct sview *view) = {
+ 	[SVIEW_YEAR1] = year1_sview_sync,
+ 	[SVIEW_YEAR2] = year2_sview_sync,
+ 	[SVIEW_YEAR3] = year3_sview_sync,
++	[SVIEW_ROTATE_PIC] = rotate_pic_sview_sync,
++	[SVIEW_ANALOG_TIME] = analog_time_sview_sync,
++	[SVIEW_ANALOG_SECOND] = analog_second_sview_sync,
++	[SVIEW_ANALOG_MINUTE] = analog_minute_sview_sync,
++	[SVIEW_ANALOG_HOUR] = analog_hour_sview_sync,
++	[SVIEW_ANALOG_DAY] = analog_day_sview_sync,
++	[SVIEW_ANALOG_WEEK] = analog_week_sview_sync,
++	[SVIEW_ANALOG_MONTH] = analog_month_sview_sync,
++	[SVIEW_ANALOG_AM_PM] = analog_am_pm_sview_sync,
++	[SVIEW_ANALOG_HOUR_WITH_MINUTE] = analog_hour_with_minute_sview_sync,
+ };
+ 
+ /**
+@@ -146,6 +201,7 @@ void (*sview_method_free[SVIEW_NUMS])(struct sview *view) = {
+ 	[SVIEW_NUM] = num_sview_free,
+ 	[SVIEW_LINEAR_LAYOUT] = linear_layout_free,
+ 	[SVIEW_ABSOLUTE_LAYOUT] = absolute_layout_free,
++	[SVIEW_FRAME_LAYOUT] = frame_layout_free,
+ 	[SVIEW_TIME_NUM] = time_num_sview_free,
+ 	[SVIEW_SECOND_L] = secondL_sview_free,
+ 	[SVIEW_SECOND_H] = secondH_sview_free,
+@@ -162,6 +218,16 @@ void (*sview_method_free[SVIEW_NUMS])(struct sview *view) = {
+ 	[SVIEW_YEAR1] = year1_sview_free,
+ 	[SVIEW_YEAR2] = year2_sview_free,
+ 	[SVIEW_YEAR3] = year3_sview_free,
++	[SVIEW_ROTATE_PIC] = rotate_pic_sview_free,
++	[SVIEW_ANALOG_TIME] = analog_time_sview_free,
++	[SVIEW_ANALOG_SECOND] = analog_second_sview_free,
++	[SVIEW_ANALOG_MINUTE] = analog_minute_sview_free,
++	[SVIEW_ANALOG_HOUR] = analog_hour_sview_free,
++	[SVIEW_ANALOG_DAY] = analog_day_sview_free,
++	[SVIEW_ANALOG_WEEK] = analog_week_sview_free,
++	[SVIEW_ANALOG_MONTH] = analog_month_sview_free,
++	[SVIEW_ANALOG_AM_PM] = analog_am_pm_sview_free,
++	[SVIEW_ANALOG_HOUR_WITH_MINUTE] = analog_hour_with_minute_sview_free,
+ };
+ 
+ /**
+@@ -173,6 +239,7 @@ struct slpt_app_res *(*sview_method_register_slpt[SVIEW_NUMS])(struct sview *vie
+ 	[SVIEW_NUM] = slpt_register_num_sview,
+ 	[SVIEW_LINEAR_LAYOUT] = slpt_register_linear_layout,
+ 	[SVIEW_ABSOLUTE_LAYOUT] = slpt_register_absolute_layout,
++	[SVIEW_FRAME_LAYOUT] = slpt_register_frame_layout,
+ 	[SVIEW_TIME_NUM] = slpt_register_time_num_sview,
+ 	[SVIEW_SECOND_L] = slpt_register_secondL_sview,
+ 	[SVIEW_SECOND_H] = slpt_register_secondH_sview,
+@@ -189,5 +256,15 @@ struct slpt_app_res *(*sview_method_register_slpt[SVIEW_NUMS])(struct sview *vie
+ 	[SVIEW_YEAR1] = slpt_register_year1_sview,
+ 	[SVIEW_YEAR2] = slpt_register_year2_sview,
+ 	[SVIEW_YEAR3] = slpt_register_year3_sview,
++	[SVIEW_ROTATE_PIC] = slpt_register_rotate_pic_sview,
++	[SVIEW_ANALOG_TIME] = slpt_register_analog_time_sview,
++	[SVIEW_ANALOG_SECOND] = slpt_register_analog_second_sview,
++	[SVIEW_ANALOG_MINUTE] = slpt_register_analog_minute_sview,
++	[SVIEW_ANALOG_HOUR] = slpt_register_analog_hour_sview,
++	[SVIEW_ANALOG_DAY] = slpt_register_analog_day_sview,
++	[SVIEW_ANALOG_WEEK] = slpt_register_analog_week_sview,
++	[SVIEW_ANALOG_MONTH] = slpt_register_analog_month_sview,
++	[SVIEW_ANALOG_AM_PM] = slpt_register_analog_am_pm_sview,
++	[SVIEW_ANALOG_HOUR_WITH_MINUTE] = slpt_register_analog_hour_with_minute_sview,
+ };
+ #endif
+diff --git a/video/lcd_region_rotate.c b/video/lcd_region_rotate.c
+index 7a583ec..2944f72 100644
+--- a/video/lcd_region_rotate.c
++++ b/video/lcd_region_rotate.c
+@@ -396,3 +396,173 @@ void color_map_free(struct color_map **s) {
+ 		*s = NULL;
+ 	}
+ }
++
++/* we know z*z = x*x + y*y; according to x,y, get the result z */
++unsigned int sqrt_xy(unsigned int x, unsigned y) {
++	unsigned long long xx;
++	unsigned long long yy;
++	unsigned long long zz;
++	unsigned int z;
++	int i = 0;
++
++	if (x == 0)
++		return y;
++
++	if (y == 0)
++		return x;
++
++	if (x < y) {
++		z = x;
++		x = y;
++		y = z;
++	}
++
++	yy = (unsigned long long)y * (unsigned long long)y;
++	xx = (unsigned long long)x * (unsigned long long)x;
++	zz = xx + yy;
++
++	z = x + (yy / x / 2) - (y / 40); /* choose the best start point */
++
++	if (zz > ((unsigned long long)z * (unsigned long long)z)) {
++		while (1) {
++			z++;
++			if (zz < ((unsigned long long)z * (unsigned long long)z)) {
++				return z;
++			}
++			i++;
++		}
++	} else if (zz < ((unsigned long long)z * (unsigned long long)z)) {
++		while (1) {
++			z--;
++			if (zz > ((unsigned long long)z * (unsigned long long)z)) {
++				return z + 1;
++			}
++			i++;
++		}
++	} else {
++		return z;
++	}
++}
++
++unsigned int points_distance(int x0, int y0, int x1, int y1) {
++	long long x = (long long)x0 - (long long)x1;
++	long long y = (long long)y0 - (long long)y1;
++
++	if (x < 0)
++		x = 0 - x;
++	if (y < 0)
++		y = 0 - y;
++
++	return sqrt_xy(x, y);
++}
++
++/* roate a fb region, and save the result, and the result is not relative to a dst region */
++void rotate_region(struct fb_region *src, int angle, struct position *pos,
++	unsigned int *length, struct color_map **s, struct color_map *s0) {
++	int yres = src->yres;
++	int xres = src->xres;
++	int pixels_per_line2 = src->pixels_per_line;
++	unsigned int *srcp = (void *)src->base;
++
++	int height;
++	int width;
++	int midX_aft, midY_aft;
++	int midX_pre, midY_pre;
++	int after_i, after_j, i, j, pre_i, pre_j;
++
++	if (!*s) {
++		*s = color_map_alloc(src, s0);
++		if (!*s) {
++			if (length)
++				*length = 0;
++			pr_err("color-rotate: failed to allocate color save\n");
++			return;
++		}
++	}
++
++	color_map_clear(*s);
++
++	if (src->xres == 0 || src->yres == 0) {
++		if (length)
++			*length = 0;
++		return;
++	}
++
++	height = sqrt_xy(xres, yres) / 2;
++	height = height + points_distance(xres / 2, yres / 2, pos->x, pos->y);
++	width = height;
++	if (length)
++		*length = height;
++
++	midX_aft = 0, midY_aft = 0;
++	midX_pre = pos->x, midY_pre = pos->y;
++
++	printf ("xres : %d yres : %d \n", xres, yres);
++	printf ("sqrt %d\n", sqrt_xy(xres, yres));
++	printf ("height : %d width %d \n", height * 2, width * 2);
++
++	for(i = 0 - height;i < height;++i) {
++		for(j = 0 - width;j < width;++j) {
++			after_i = i - midY_aft;
++			after_j = j - midX_aft;
++			pre_j = (cos_int(angle) * after_i - sin_int(angle) * after_j) / SIN_COS_DIVIDER + midY_pre;
++			pre_i = (sin_int(angle) * after_i + cos_int(angle) * after_j) / SIN_COS_DIVIDER + midX_pre;
++			if(pre_j >= 0 && pre_j < yres && pre_i >= 0 && pre_i < xres)
++				if (srcp[pre_j * pixels_per_line2 + pre_i] != ALPHA32BIT)
++					color_map_add(*s, j, i, srcp[pre_j * pixels_per_line2 + pre_i]);
++		}
++	}
++}
++
++void write_color_map(struct fb_region *region, struct color_map *s, int x_offset, int y_offset, int quad) {
++	int i;
++	struct color_pos *save = s->save;
++	int length = s->real_length;
++	unsigned int *dstp = region->base;
++	unsigned int pixels_per_line  = region->pixels_per_line;
++	int xres = region->xres;
++	int yres = region->yres;
++	int x, y;
++
++	switch (quad) {
++	case 0:
++		for (i = 0; i < length; ++i) {
++			x = save[i].x + x_offset;
++			y = save[i].y + y_offset;
++			if (x >= 0 && x < xres && y >= 0 && y < yres)
++				dstp[y * pixels_per_line + x] = save[i].color;
++		}
++		printf ("quad 0\n");
++		break;
++
++	case 1:
++		for (i = 0; i < length; ++i) {
++			x = save[i].y + x_offset;
++			y = 0 - save[i].x + y_offset;
++			if (x >= 0 && x < xres && y >= 0 && y < yres)
++				dstp[y * pixels_per_line + x] = save[i].color;
++		}
++		printf ("quad 1\n");
++		break;
++
++	case 2:
++		for (i = 0; i < length; ++i) {
++			x = 0 - save[i].x + x_offset;
++			y = 0 - save[i].y + y_offset;
++			if (x >= 0 && x < xres && y >= 0 && y < yres)
++				dstp[y * pixels_per_line + x] = save[i].color;
++		}
++		printf ("quad 2\n");
++		break;
++
++	case 3:
++		for (i = 0; i < length; ++i) {
++			x = 0 - save[i].y + x_offset;
++			y = save[i].x + y_offset;
++			if (x >= 0 && x < xres && y >= 0 && y < yres)
++				dstp[y * pixels_per_line + x] = save[i].color;
++		}
++		printf ("quad 3\n");
++		break;
++	}
++}

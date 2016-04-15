@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="iwds_jar_custom_rules" >
+
+    <!-- ==================以下为新增加的内容==================　 -->
+    <target name="iwds-jar"    description="Builds the elf application in release mode." >
+        <antcall target="release" />
+    </target>
+
+    <target name="elf-release" description="Builds the elf application in release mode." >
+        <antcall target="release" />
+    </target>
+
+    <target name="elf-debug"  description="Builds the elf application in debug mode." >
+        <antcall target="debug" />
+    </target>
+
+    <target
+        name="release-copyfile"
+        description="copy native libs ,jar,apk to the elf compiler output path." >
+         <copy
+            file="${out.absolute.dir}/proguard/obfuscated.jar"
+            overwrite="true"
+            failonerror="false"
+            tofile="../${jars.dir}/${ant.project.name}.jar" />
+    </target>
+
+    <target
+        name="debug-copyfile"
+        description="copy native libs ,jar,apk to the elf compiler output path." >
+        <copy
+            file="${out.absolute.dir}/classes.jar"
+            overwrite="true"
+            failonerror="false"
+            tofile="../${jars.dir}/${ant.project.name}.jar" />
+    </target>
+
+    <!-- Generate the API HTML pages -->
+    <property
+        name="src.dir"
+        value="src" />
+    <property
+        name="doc.dir"
+        value="doc" />
+    <target
+        name="createdoc"
+        description="Generate the API HTML pages" >
+        <delete dir="${doc.dir}" />
+        <mkdir  dir="${doc.dir}" />
+        <javadoc
+            windowtitle="Ingenic elf os1.0 API"
+            destdir="${doc.dir}"
+            docencoding="UTF-8"
+            encoding="UTF-8" 
+            charset="UTF-8">
+            <packageset dir="${src.dir}" >
+                <include name="**" />
+            </packageset>
+        </javadoc>
+    </target>
+    <target name="-pre-build">
+        <delete dir="bin/res/crunch"/>
+    </target>
+</project>

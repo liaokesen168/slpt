@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <string name="app_name">CloudTest</string>
+    <string name="login_label">登录</string>
+    <string name="login_anonymous_label">匿名登录</string>
+    <string name="action_third_account_login">第三方账号登录</string>
+    <string name="register_label">注册</string>
+    <string name="reset_password_label">重置密码</string>
+    <string name="insert_label">insert</string>
+    <string name="update_label">update</string>
+    <string name="query_label">query</string>
+    <string name="delete_label">delete</string>
+    <string name="user_name_label">用户名</string>
+    <string name="password_label">密码</string>
+    <string name="mail_label">邮箱</string>
+    <string name="verification_code_label">验证码</string>
+    <string name="request_verification_label">获取验证码</string>
+    <string name="phone_number_label">手机号</string>
+    <string name="normal_register_label">普通注册</string>
+    <string name="phone_register_label">手机注册</string>
+    <string name="mail_register_label">邮箱注册</string>
+    <string name="reset_passwrod_label">重置密码</string>
+
+</resources>

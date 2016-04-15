@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">DMTest</string>
+    <string name="get_hand">get hand</string>
+    <string name="set_right">set right</string>
+    <string name="set_left">set left</string>
+    <string name="log">status:</string>
+
+</resources>

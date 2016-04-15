@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RemoteSpeechTest</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="no_demos">No demos</string>
+    <string name="speech_recognition_demo">语音识别</string>
+    <string name="speech_recognition_description">将一段语音转换成文字内容</string>
+    <string name="speech_synthesis_demo">语音合成</string>
+    <string name="speech_synthesis_description">将一段文字转换为成语音</string>
+    <string name="speech_understanding_demo">语义理解</string>
+    <string name="speech_understanding_description">分析用户语音的意图，给出相应的回答</string>
+    <string name="remote_connected">远端设备连接已建立</string>
+    <string name="remote_disconnected">远端设备连接断开</string>
+    <string name="remote_componment_not_install">请在手机端安装灵犀语音助手</string>
+    <string name="remote_service_killed">远端设备服务被异常结束</string>
+    <string name="speak_content">君正智能手表开放平台是针对于智能可穿戴领域而推出的硬件开放套件，它可以用于相关领域的产品、应用和服务的开发。</string>
+
+</resources>

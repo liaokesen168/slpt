@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/regeoButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border"
+        android:paddingBottom="@dimen/start_content_vertical"
+        android:paddingTop="@dimen/start_content_vertical"
+        android:text="RegeoCoding(40.046486,116.285194)"
+        android:textColor="@color/black"
+        android:textSize="16sp" >
+    </Button>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.1dp"
+        android:background="@color/black" >
+    </View>
+
+    <Button
+        android:id="@+id/geoButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border"
+        android:paddingBottom="@dimen/start_content_vertical"
+        android:paddingTop="@dimen/start_content_vertical"
+        android:text="GeoCoding(创维半导体设计大厦)"
+        android:textColor="@color/black"
+        android:textSize="16sp" >
+    </Button>
+
+</LinearLayout>

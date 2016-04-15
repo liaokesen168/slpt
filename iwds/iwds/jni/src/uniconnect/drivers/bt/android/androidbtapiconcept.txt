@@ -1,0 +1,311 @@
+Android BT API concept
+======================
+
+Client:
+    BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+
+    BluetoothDevice device = adapter.getRemoteDevice(address);
+
+    BluetoothSocket socket = device.createRfcommSocketToServiceRecord(<UUID>);
+
+    adapter.cancelDiscovery()
+
+    socket.connect();
+
+    output = mSocket.getOutputStream();
+    input = mSocket.getInputStream();
+
+
+
+**********************************************************************
+**********************************************************************
+
+
+
+Server:
+    BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+
+    BluetoothServerSocket serverSocket =
+            adapter.listenUsingRfcommWithServiceRecord(<ServerName>, <UUID>);
+
+    BluetoothSocket client = serverSocket.accept();
+
+
+
+**********************************************************************
+**********************************************************************
+
+
+
+Classes:
+    BluetoothAdapter
+    BluetoothDevice
+    BluetoothServerSocket
+    BluetoothSocket
+    OutputStream
+    InputStream
+
+Methods:
+    BluetoothAdapter:
+        getDefaultAdapter()
+        listenUsingRfcommWithServiceRecord
+
+    BluetoothDevice:
+        getRemoteDevice()
+        createRfcommSocketToServiceRecord()
+
+    BluetoothServerSocket:
+        accept()
+
+    BluetoothSocket:
+        connect()
+        getOutputStream()
+        getInputStream()
+
+    InputStream:
+        read()
+
+    OutputStream:
+        write()
+        flush()
+
+Signature:
+    BluetoothAdapter.java:
+        public final class android.bluetooth.BluetoothAdapter extends java.lang.Object{
+        public static final int ERROR;
+          Signature: I
+        public static final java.lang.String ACTION_STATE_CHANGED;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String EXTRA_STATE;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String EXTRA_PREVIOUS_STATE;
+          Signature: Ljava/lang/String;
+        public static final int STATE_OFF;
+          Signature: I
+        public static final int STATE_TURNING_ON;
+          Signature: I
+        public static final int STATE_ON;
+          Signature: I
+        public static final int STATE_TURNING_OFF;
+          Signature: I
+        public static final java.lang.String ACTION_REQUEST_DISCOVERABLE;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String EXTRA_DISCOVERABLE_DURATION;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String ACTION_REQUEST_ENABLE;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String ACTION_SCAN_MODE_CHANGED;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String EXTRA_SCAN_MODE;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String EXTRA_PREVIOUS_SCAN_MODE;
+          Signature: Ljava/lang/String;
+        public static final int SCAN_MODE_NONE;
+          Signature: I
+        public static final int SCAN_MODE_CONNECTABLE;
+          Signature: I
+        public static final int SCAN_MODE_CONNECTABLE_DISCOVERABLE;
+          Signature: I
+        public static final java.lang.String ACTION_DISCOVERY_STARTED;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String ACTION_DISCOVERY_FINISHED;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String ACTION_LOCAL_NAME_CHANGED;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String EXTRA_LOCAL_NAME;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String ACTION_CONNECTION_STATE_CHANGED;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String EXTRA_CONNECTION_STATE;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String EXTRA_PREVIOUS_CONNECTION_STATE;
+          Signature: Ljava/lang/String;
+        public static final int STATE_DISCONNECTED;
+          Signature: I
+        public static final int STATE_CONNECTING;
+          Signature: I
+        public static final int STATE_CONNECTED;
+          Signature: I
+        public static final int STATE_DISCONNECTING;
+          Signature: I
+        android.bluetooth.BluetoothAdapter();
+          Signature: ()V
+        public static synchronized android.bluetooth.BluetoothAdapter getDefaultAdapter();
+          Signature: ()Landroid/bluetooth/BluetoothAdapter;
+        public android.bluetooth.BluetoothDevice getRemoteDevice(java.lang.String);
+          Signature: (Ljava/lang/String;)Landroid/bluetooth/BluetoothDevice;
+        public boolean isEnabled();
+          Signature: ()Z
+        public int getState();
+          Signature: ()I
+        public boolean enable();
+          Signature: ()Z
+        public boolean disable();
+          Signature: ()Z
+        public java.lang.String getAddress();
+          Signature: ()Ljava/lang/String;
+        public java.lang.String getName();
+          Signature: ()Ljava/lang/String;
+        public boolean setName(java.lang.String);
+          Signature: (Ljava/lang/String;)Z
+        public int getScanMode();
+          Signature: ()I
+        public boolean startDiscovery();
+          Signature: ()Z
+        public boolean cancelDiscovery();
+          Signature: ()Z
+        public boolean isDiscovering();
+          Signature: ()Z
+        public java.util.Set getBondedDevices();
+          Signature: ()Ljava/util/Set;
+        public int getProfileConnectionState(int);
+          Signature: (I)I
+        public android.bluetooth.BluetoothServerSocket listenUsingRfcommWithServiceRecord(java.lang.String, java.util.UUID)   throws java.io.IOException;
+          Signature: (Ljava/lang/String;Ljava/util/UUID;)Landroid/bluetooth/BluetoothServerSocket;
+        public android.bluetooth.BluetoothServerSocket listenUsingInsecureRfcommWithServiceRecord(java.lang.String, java.util.UUID)   throws java.io.IOException;
+          Signature: (Ljava/lang/String;Ljava/util/UUID;)Landroid/bluetooth/BluetoothServerSocket;
+        public boolean getProfileProxy(android.content.Context, android.bluetooth.BluetoothProfile$ServiceListener, int);
+          Signature: (Landroid/content/Context;Landroid/bluetooth/BluetoothProfile$ServiceListener;I)Z
+        public void closeProfileProxy(int, android.bluetooth.BluetoothProfile);
+          Signature: (ILandroid/bluetooth/BluetoothProfile;)V
+        public static boolean checkBluetoothAddress(java.lang.String);
+          Signature: (Ljava/lang/String;)Z
+
+    BluetoothDevice.java:
+        public final class android.bluetooth.BluetoothDevice extends java.lang.Object implements android.os.Parcelable{
+        public static final int ERROR;
+          Signature: I
+        public static final java.lang.String ACTION_FOUND;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String ACTION_CLASS_CHANGED;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String ACTION_ACL_CONNECTED;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String ACTION_ACL_DISCONNECT_REQUESTED;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String ACTION_ACL_DISCONNECTED;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String ACTION_NAME_CHANGED;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String ACTION_BOND_STATE_CHANGED;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String EXTRA_DEVICE;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String EXTRA_NAME;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String EXTRA_RSSI;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String EXTRA_CLASS;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String EXTRA_BOND_STATE;
+          Signature: Ljava/lang/String;
+        public static final java.lang.String EXTRA_PREVIOUS_BOND_STATE;
+          Signature: Ljava/lang/String;
+        public static final int BOND_NONE;
+          Signature: I
+        public static final int BOND_BONDING;
+          Signature: I
+        public static final int BOND_BONDED;
+          Signature: I
+        public static final android.os.Parcelable$Creator CREATOR;
+          Signature: Landroid/os/Parcelable$Creator;
+        android.bluetooth.BluetoothDevice();
+          Signature: ()V
+        public boolean equals(java.lang.Object);
+          Signature: (Ljava/lang/Object;)Z
+        public int hashCode();
+          Signature: ()I
+        public java.lang.String toString();
+          Signature: ()Ljava/lang/String;
+        public int describeContents();
+          Signature: ()I
+        public void writeToParcel(android.os.Parcel, int);
+          Signature: (Landroid/os/Parcel;I)V
+        public java.lang.String getAddress();
+          Signature: ()Ljava/lang/String;
+        public java.lang.String getName();
+          Signature: ()Ljava/lang/String;
+        public int getBondState();
+          Signature: ()I
+        public android.bluetooth.BluetoothClass getBluetoothClass();
+          Signature: ()Landroid/bluetooth/BluetoothClass;
+        public android.bluetooth.BluetoothSocket createRfcommSocketToServiceRecord(java.util.UUID)   throws java.io.IOException;
+          Signature: (Ljava/util/UUID;)Landroid/bluetooth/BluetoothSocket;
+        public android.bluetooth.BluetoothSocket createInsecureRfcommSocketToServiceRecord(java.util.UUID)   throws java.io.IOException;
+          Signature: (Ljava/util/UUID;)Landroid/bluetooth/BluetoothSocket;
+        static {};
+          Signature: ()V
+        }
+
+    BluetoothSocket.java:
+        public final class android.bluetooth.BluetoothSocket extends java.lang.Object implements java.io.Closeable{
+        android.bluetooth.BluetoothSocket();
+          Signature: ()V
+        public void connect()   throws java.io.IOException;
+          Signature: ()V
+        public void close()   throws java.io.IOException;
+          Signature: ()V
+        public android.bluetooth.BluetoothDevice getRemoteDevice();
+          Signature: ()Landroid/bluetooth/BluetoothDevice;
+        public java.io.InputStream getInputStream()   throws java.io.IOException;
+          Signature: ()Ljava/io/InputStream;
+        public java.io.OutputStream getOutputStream()   throws java.io.IOException;
+          Signature: ()Ljava/io/OutputStream;
+        public boolean isConnected();
+          Signature: ()Z
+        }
+
+    BluetoothServerSocket.java:
+        public final class android.bluetooth.BluetoothServerSocket extends java.lang.Object implements java.io.Closeable{
+        android.bluetooth.BluetoothServerSocket();
+          Signature: ()V
+        public android.bluetooth.BluetoothSocket accept()   throws java.io.IOException;
+          Signature: ()Landroid/bluetooth/BluetoothSocket;
+        public android.bluetooth.BluetoothSocket accept(int)   throws java.io.IOException;
+          Signature: (I)Landroid/bluetooth/BluetoothSocket;
+        public void close()   throws java.io.IOException;
+          Signature: ()V
+        }
+
+    InputStream.java:
+        public abstract class java.io.InputStream extends java.lang.Object implements java.io.Closeable{
+        private static final int MAX_SKIP_BUFFER_SIZE;
+          Signature: I
+        public java.io.InputStream();
+          Signature: ()V
+        public abstract int read()   throws java.io.IOException;
+          Signature: ()I
+        public int read(byte[])   throws java.io.IOException;
+          Signature: ([B)I
+        public int read(byte[], int, int)   throws java.io.IOException;
+          Signature: ([BII)I
+        public long skip(long)   throws java.io.IOException;
+          Signature: (J)J
+        public int available()   throws java.io.IOException;
+          Signature: ()I
+        public void close()   throws java.io.IOException;
+          Signature: ()V
+        public synchronized void mark(int);
+          Signature: (I)V
+        public synchronized void reset()   throws java.io.IOException;
+          Signature: ()V
+        public boolean markSupported();
+          Signature: ()Z
+        }
+
+    OutputStream.java:
+        public abstract class java.io.OutputStream extends java.lang.Object implements java.io.Closeable,java.io.Flushable{
+        public java.io.OutputStream();
+          Signature: ()V
+        public abstract void write(int)   throws java.io.IOException;
+          Signature: (I)V
+        public void write(byte[])   throws java.io.IOException;
+          Signature: ([B)V
+        public void write(byte[], int, int)   throws java.io.IOException;
+          Signature: ([BII)V
+        public void flush()   throws java.io.IOException;
+          Signature: ()V
+        public void close()   throws java.io.IOException;
+          Signature: ()V
+        }
+

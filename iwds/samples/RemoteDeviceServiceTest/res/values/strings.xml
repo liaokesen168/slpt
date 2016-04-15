@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RemoteDeviceServiceTest</string>
+    <string name="app_list"></string>
+    <string name="button_getlist">Get AppList</string>
+    <string name="button_install">Install App</string>
+    <string name="button_delete">Delete App</string>
+    <string name="button_pkg_size">Get PkgSizeInfo</string>
+    <string name="button_clear_data">Del app data</string>
+    <string name="button_clear_cache">Del app cache</string>
+    <string name="button_get_mem">get memInfo</string>
+    <string name="button_get_processes">Get running processes</string>
+    <string name="button_kill_process">Kill process</string>
+    <string name="button_clear_log">Clear log</string>
+    <string name="button_del_all_data">Del all app data</string>
+    <string name="button_get_storage">Get storage info</string>
+    <string name="button_set_right_hand">Set right hand</string>
+    <string name="button_set_left_hand">Set left hand</string>
+    <string name="button_get_hand">Get hand</string>
+    <string name="text_progress"></string>
+    <string name="request_remote_failed">failed in remote device</string>
+    <string name="request_failed_previous_doing">request failed because waiting a previous request</string>
+    <string name="install_failed_already_exists">install failed because the app already exists</string>
+    <string name="install_failed_invalid_uri">install failed because apk file URI is invalid</string>
+    <string name="install_failed_insufficient_storage">install failed because of insufficient storage</string>
+    <string name="install_failed_invalid_apk">install failed because apk file\'s is invalid</string>
+    <string name="install_failed_inconsistent_certificates">install failed because of inconsistent certificates</string>
+    <string name="install_failed_older_sdk">install failed because sdk version of remote device is older than needed</string>
+    <string name="install_failed_cpu_abi_incompatible">install failed because of cpu abi incompatible</string>
+    <string name="install_failed_version_downgrade">install failed because of version downgrade</string>
+    <string name="install_failed_send_apk_file_error">install failed because of error when sending file to remote device</string>
+    <string name="delete_failed_internal_error">delete failed because of internal error in remote device</string>
+    <string name="delete_failed_device_policy_manager">delete failed because the package is the active devicePolicy manager</string>
+    <string name="delete_failed_user_restricted">delete failed because the user is restricted</string>
+    <string name="request_failed_service_disconnected">request failed because remote service disconnected</string>
+
+</resources>

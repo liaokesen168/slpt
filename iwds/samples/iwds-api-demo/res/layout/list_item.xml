@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.ingenic.iwds.widget.MatrixView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/item_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/item_margin"
+        android:background="@drawable/item_shape"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceLarge" >
+    </TextView>
+
+</com.ingenic.iwds.widget.MatrixView>

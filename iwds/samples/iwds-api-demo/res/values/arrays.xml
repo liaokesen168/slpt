@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="apis">
+        <item>RightScrollView</item>
+        <item>FocusListView</item>
+        <item>SwipeListView</item>
+        <item>ViewPager</item>
+        <item>Dialog</item>
+        <item>Progress</item>
+        <item>SmartVibrate</item>
+        <item>GLBlur</item>
+    </string-array>
+
+    <string-array name="dialogs">
+        <item>AmazingDialog</item>
+        <item>AmazingProgressDialog</item>
+    </string-array>
+
+    <string-array name="vibrates">
+        <item>Vibrate Mode 1</item>
+        <item>Vibrate Mode 2</item>
+        <item>Vibrate Mode 3</item>
+        <item>Vibrate Mode 4</item>
+        <item>Special Mode 1</item>
+        <item>Special Mode 2</item>
+        <!-- <item>Special Mode 3</item>
+        <item>Special Mode 4</item>
+        <item>Special Mode 5</item> -->
+    </string-array>
+</resources>

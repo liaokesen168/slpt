@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="iwds_custom_rules" >
+
+    <!-- ==================以下为新增加的内容==================　 -->
+    <target name="iwds" description="Builds the elf application in release mode." >
+        <antcall target="release" />
+    </target>
+
+    <target name="elf-release" description="Builds the elf application in release mode." >
+        <antcall target="release" />
+    </target>
+
+    <target name="elf-debug" description="Builds the elf application in debug mode." >
+        <antcall target="debug" />
+    </target>
+
+    <target
+        name="ndk_build"
+        description="Compile c/c++ code to so file." >
+        <exec executable="./ndk-build-wrapper.sh" failonerror="true"/>
+        <echo message="out.final.file----${out.final.file}" >
+        </echo>
+    </target>
+
+    <target
+        name="ndk_build_clean"
+        description="clean so file." >
+        <exec executable="./ndk-build-clean-wrapper.sh" failonerror="true"/>
+        <echo message="out.final.file----${out.final.file}" >
+        </echo>
+    </target>
+
+    <target
+        name="debug-copyfile"
+        description="copy native libs ,jar,apk to the elf compiler output path." >
+        <copy
+            overwrite="true"
+            todir="../${nativelib.dir}" >
+            <fileset dir="${native.libs.absolute.dir}" />
+        </copy>
+        <!--copy
+            file="${out.absolute.dir}/classes.jar"
+            overwrite="true"
+            tofile="../${jars.dir}/${ant.project.name}.jar" /-->
+    </target>
+
+    <target
+        name="release-copyfile"
+        description="copy native libs ,jar,apk to the elf compiler output path." >
+        <copy
+            overwrite="true"
+            todir="../${nativelib.dir}" >
+            <fileset dir="${native.libs.absolute.dir}" />
+        </copy>
+        <!--copy
+            file="${out.absolute.dir}/proguard/obfuscated.jar"
+            overwrite="true"
+            failonerror="false"
+            tofile="../${jars.dir}/${ant.project.name}.jar" /-->
+    </target>
+    <!-- 引用extnernal jar，比如frameworks.jar -->
+    <target name="-pre-compile"
+        description="-pre-compile" >
+        <echo message="CLASSPATH.OLD=${toString:project.target.class.path}"></echo>
+        <path id="project.target.class.path">
+            <pathelement location="framework/framework-pm.jar"></pathelement>
+            <pathelement location="framework/framework-am.jar"></pathelement>
+            <pathelement location="${sdk.dir}/platforms/${target}/android.jar"></pathelement>
+        </path>
+        <echo message="CLASSPATH.NEW=${toString:project.target.class.path}"></echo>
+    </target>
+    <target name="-pre-build">
+        <delete dir="bin/res/crunch"/>
+    </target>
+</project>

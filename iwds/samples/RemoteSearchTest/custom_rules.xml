@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="RemoteSearchTest-custom-rules" >
+
+    <!-- ==================以下为新增加的内容==================　 -->
+    <target name="RemoteSearchTest" description="Builds the elf application in release mode." >
+        <antcall target="release" />
+        <antcall target="release-copyfile" />
+    </target>
+
+    <target name="elf-release" description="Builds the elf application in release mode." >
+        <antcall target="release" />
+        <antcall target="release-copyfile" />
+    </target>
+
+    <target name="elf-debug" description="Builds the elf application in debug mode." >
+        <antcall target="debug" />
+        <antcall target="debug-copyfile" />
+    </target>
+
+    <target
+        name="release-copyfile"
+        description="copy native libs ,jar,apk to the elf compiler output path." >
+	<copy
+            file="${out.absolute.dir}/${ant.project.name}-release.apk"
+            overwrite="true"
+            failonerror="false"
+            tofile="../../${watchdemo.dir}/${ant.project.name}.apk" />
+    </target>
+    <target
+        name="debug-copyfile"
+        description="copy native libs ,jar,apk to the elf compiler output path." >
+        <copy
+            file="${out.absolute.dir}/${ant.project.name}-debug.apk"
+            overwrite="true"
+            failonerror="false"
+            tofile="../../${watchdemo.dir}/${ant.project.name}.apk" />
+    </target>
+    <target name="-pre-build">
+        <delete dir="bin/res/crunch"/>
+    </target>
+</project>

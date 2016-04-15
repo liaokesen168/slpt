@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ingenic.iwds"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="21" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <application
+        android:name="com.ingenic.iwds.IwdsApplication"
+        android:allowBackup="true"
+        android:persistent="true" >
+        <service
+            android:name="com.ingenic.iwds.app.NotificationProxyService"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.ingenic.iwds.app.NotificationProxyService" >
+                </action>
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.ingenic.iwds.slpt.WatchFaceService"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.ingenic.iwds.slpt.WatchFaceService" >
+                </action>
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.ingenic.iwds.smartsense.SensorService"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.ingenic.iwds.smartsense.SensorService" >
+                </action>
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.ingenic.iwds.smartsense.RemoteSensorService"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.ingenic.iwds.smartsense.RemoteSensorService" >
+                </action>
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.ingenic.iwds.smartlocation.RemoteLocationService"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.ingenic.iwds.smartlocation.RemoteLocationService" >
+                </action>
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.ingenic.iwds.smartlocation.search.RemoteSearchService"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.ingenic.iwds.smartlocation.search.RemoteSearchService" >
+                </action>
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.ingenic.iwds.smartspeech.RemoteSpeechService"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.ingenic.iwds.smartspeech.RemoteSpeechService" >
+                </action>
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.ingenic.iwds.smartvibrate.VibrateService"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.ingenic.iwds.smartvibrate.VibrateService" >
+                </action>
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.ingenic.iwds.uniconnect.ConnectionService"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.ingenic.iwds.uniconnect.ConnectionService" >
+                </action>
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.ingenic.iwds.devicemanager.DeviceManagerService"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.ingenic.iwds.devicemanager.DeviceManagerService" >
+                </action>
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.ingenic.iwds.remotedevice.RemoteDeviceService"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.ingenic.iwds.remotedevice.RemoteDeviceService" >
+                </action>
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.ingenic.iwds.IwdsService"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.ingenic.iwds.IwdsService" >
+                </action>
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.ingenic.iwds.cloud.CloudService"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.ingenic.iwds.cloud.CloudService" >
+                </action>
+            </intent-filter>
+        </service>
+    </application>
+
+</manifest>
